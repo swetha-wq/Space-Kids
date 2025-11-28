@@ -1,0 +1,1793 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Space Maths Mission</title>
+    <style>
+      * {
+        box-sizing: border-box;
+        padding: 0;
+        margin: 0;
+        font-family: "Poppins", system-ui, sans-serif;
+      }
+      .back-button {
+            position: absolute;
+            top: 8vh;
+            left: 2vh;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(120, 99, 150, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(141, 84, 221, 0.6);
+        }
+        
+        .back-button i {
+            font-size: 1rem;
+        }
+
+      body {
+        background: radial-gradient(circle at top, #1b1f4b, #050616);
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        overflow: hidden;
+        position: relative;
+      }
+
+      /* Space Background (subtle) */
+      .space-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background: radial-gradient(
+            circle at 20% 30%,
+            rgba(120, 119, 198, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 70%,
+            rgba(255, 119, 198, 0.2) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 80%,
+            rgba(120, 219, 255, 0.2) 0%,
+            transparent 50%
+          ),
+          radial-gradient(ellipse at bottom, #1b1f4b 0%, #050616 70%);
+      }
+
+      .stars {
+        position: absolute;
+        inset: 0;
+        background-image: radial-gradient(
+            2px 2px at 20px 30px,
+            #eee,
+            transparent
+          ),
+          radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+          radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+          radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+          radial-gradient(2px 2px at 160px 30px, #eee, transparent),
+          radial-gradient(1px 1px at 210px 60px, #fff, transparent),
+          radial-gradient(2px 2px at 250px 90px, #eee, transparent),
+          radial-gradient(1px 1px at 290px 20px, #fff, transparent);
+        background-repeat: repeat;
+        background-size: 550px 550px;
+        animation: twinkle 8s ease-in-out infinite alternate;
+        z-index: -1;
+      }
+
+      @keyframes twinkle {
+        0% {
+          opacity: 0.7;
+        }
+        100% {
+          opacity: 1;
+        }
+      }
+
+      /* Floating astronauts / UFO / satellite OUTSIDE card */
+      .floating-astro,
+      .floating-ufo,
+      .floating-satellite {
+        position: absolute;
+        font-size: 30px;
+        opacity: 0.9;
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .floating-astro {
+        top: 15%;
+        left: 10%;
+        animation: float-up 4s ease-in-out infinite alternate;
+      }
+
+      .floating-ufo {
+        top: 12%;
+        right: 12%;
+        animation: float-side 5s ease-in-out infinite alternate;
+      }
+
+      .floating-satellite {
+        bottom: 10%;
+        right: 20%;
+        animation: float-diag 6s ease-in-out infinite alternate;
+      }
+
+      @keyframes float-up {
+        0% {
+          transform: translateY(0);
+        }
+        100% {
+          transform: translateY(-10px);
+        }
+      }
+
+      @keyframes float-side {
+        0% {
+          transform: translateX(0);
+        }
+        100% {
+          transform: translateX(15px);
+        }
+      }
+
+      @keyframes float-diag {
+        0% {
+          transform: translate(0, 0);
+        }
+        100% {
+          transform: translate(-12px, -8px);
+        }
+      }
+
+      .page-wrapper {
+        width: 100%;
+        max-width: 1100px;
+        aspect-ratio: 16 / 9;
+        background: linear-gradient(#2a124e, #1b0f2f);
+        border-radius: 24px;
+        padding: 16px 24px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        position: relative;
+        overflow: hidden;
+        z-index: 1;
+      }
+
+      .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .page-header h1 {
+        font-size: 28px;
+        letter-spacing: 1px;
+      }
+
+      .page-header span {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      /* Map area */
+      .space-map {
+        position: relative;
+        width: 100%;
+        height: calc(100% - 52px);
+        border-radius: 20px;
+        padding: 16px;
+        overflow: hidden;
+        background: radial-gradient(
+          circle at top,
+          #43308a 0%,
+          #1a0f3e 45%,
+          #070418 100%
+        );
+      }
+
+      .space-map::before {
+        content: none;
+      }
+
+      /* Rocket */
+      .rocket {
+        position: absolute;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 32px;
+        z-index: 2;
+        transform: translate(-50%, -50%);
+        text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+        transition: transform 0.2s ease;
+      }
+
+      /* Topic nodes (PLANETS) */
+      .topic-node {
+        position: absolute;
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        border: 3px solid rgba(255, 255, 255, 0.3);
+        background: radial-gradient(circle at 30% 20%, #ffe8ff, #8a63ff);
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        z-index: 1;
+      }
+
+      /* Sun in center - All Topics */
+      .topic-node.sun {
+        width: 100px;
+        height: 100px;
+        background: radial-gradient(
+          circle at 30% 20%,
+          #fff9e6,
+          #ffb84a,
+          #ff8c42
+        );
+        border: 4px solid rgba(255, 200, 100, 0.6);
+        box-shadow: 0 0 40px rgba(255, 184, 74, 0.8),
+          0 6px 15px rgba(0, 0, 0, 0.5);
+        animation: pulse-sun 3s ease-in-out infinite;
+      }
+
+      @keyframes pulse-sun {
+        0%,
+        100% {
+          box-shadow: 0 0 40px rgba(255, 184, 74, 0.8),
+            0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+        50% {
+          box-shadow: 0 0 60px rgba(255, 184, 74, 1),
+            0 6px 15px rgba(0, 0, 0, 0.5);
+        }
+      }
+
+      .topic-node span.number {
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .topic-node span.label {
+        font-size: 10px;
+        margin-top: 2px;
+        text-align: center;
+        padding: 0 4px;
+      }
+
+      .topic-node:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      }
+
+      /* Planet visuals */
+      .topic-node.mercury {
+        background: radial-gradient(
+          circle at 30% 25%,
+          #e5e5e5,
+          #9e9e9e,
+          #6b6b6b
+        );
+        border-color: rgba(150, 150, 150, 0.5);
+        box-shadow: 0 6px 15px rgba(100, 100, 100, 0.6);
+      }
+
+      .topic-node.venus {
+        background: radial-gradient(
+          circle at 30% 25%,
+          #fff4d6,
+          #e6c87a,
+          #c4a35a
+        );
+        border-color: rgba(230, 200, 120, 0.5);
+        box-shadow: 0 6px 15px rgba(200, 160, 80, 0.6);
+      }
+
+      .topic-node.earth {
+        background: radial-gradient(
+            circle at 65% 35%,
+            rgba(255, 255, 255, 0.3) 0%,
+            transparent 25%
+          ),
+          radial-gradient(circle at 30% 25%, #87ceeb, #4a90c2, #2d5a7b);
+        border-color: rgba(100, 180, 255, 0.5);
+        box-shadow: 0 6px 15px rgba(50, 120, 200, 0.6);
+      }
+      .topic-node.earth::after {
+        content: "";
+        position: absolute;
+        width: 35%;
+        height: 25%;
+        background: #3cb371;
+        border-radius: 50%;
+        top: 35%;
+        left: 25%;
+        opacity: 0.7;
+      }
+
+      .topic-node.mars {
+        background: radial-gradient(
+          circle at 30% 25%,
+          #e8a87c,
+          #c1440e,
+          #8b2500
+        );
+        border-color: rgba(200, 80, 40, 0.5);
+        box-shadow: 0 6px 15px rgba(180, 60, 30, 0.6);
+      }
+
+      .topic-node.jupiter {
+        background: linear-gradient(
+          180deg,
+          #d4a574 0%,
+          #c9a067 15%,
+          #e8cfa0 25%,
+          #d4a574 35%,
+          #b8860b 50%,
+          #d4a574 65%,
+          #e8cfa0 75%,
+          #c9a067 85%,
+          #d4a574 100%
+        );
+        border-color: rgba(200, 150, 100, 0.5);
+        box-shadow: 0 6px 15px rgba(180, 130, 80, 0.6);
+      }
+
+      .topic-node.saturn {
+        background: linear-gradient(
+          180deg,
+          #f4e4bc 0%,
+          #e6d5a8 25%,
+          #d4c896 50%,
+          #e6d5a8 75%,
+          #f4e4bc 100%
+        );
+        border-color: rgba(230, 210, 160, 0.5);
+        box-shadow: 0 6px 15px rgba(200, 180, 130, 0.6);
+      }
+      .topic-node.saturn::before {
+        content: "";
+        position: absolute;
+        width: 140%;
+        height: 30%;
+        border: 3px solid rgba(210, 180, 140, 0.7);
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) rotateX(70deg);
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      .topic-node.uranus {
+        background: radial-gradient(
+          circle at 30% 25%,
+          #e0ffff,
+          #afeeee,
+          #5f9ea0
+        );
+        border-color: rgba(150, 220, 220, 0.5);
+        box-shadow: 0 6px 15px rgba(100, 180, 180, 0.6);
+      }
+
+      .topic-node.neptune {
+        background: radial-gradient(
+          circle at 30% 25%,
+          #87cefa,
+          #4169e1,
+          #1e3a8a
+        );
+        border-color: rgba(70, 130, 220, 0.5);
+        box-shadow: 0 6px 15px rgba(50, 100, 200, 0.6);
+      }
+
+      /* Orbital rings */
+      .orbit {
+        position: absolute;
+        border: 2px dashed rgba(255, 255, 255, 0.15);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .orbit-1 {
+        width: calc(var(--orbit-unit) * 2.2);
+        height: calc(var(--orbit-unit) * 2.2);
+      }
+      .orbit-2 {
+        width: calc(var(--orbit-unit) * 2.8);
+        height: calc(var(--orbit-unit) * 2.8);
+      }
+      .orbit-3 {
+        width: calc(var(--orbit-unit) * 3.4);
+        height: calc(var(--orbit-unit) * 3.4);
+      }
+      .orbit-4 {
+        width: calc(var(--orbit-unit) * 4);
+        height: calc(var(--orbit-unit) * 4);
+      }
+      .orbit-5 {
+        width: calc(var(--orbit-unit) * 4.6);
+        height: calc(var(--orbit-unit) * 4.6);
+      }
+      .orbit-6 {
+        width: calc(var(--orbit-unit) * 5.2);
+        height: calc(var(--orbit-unit) * 5.2);
+      }
+      .orbit-7 {
+        width: calc(var(--orbit-unit) * 5.8);
+        height: calc(var(--orbit-unit) * 5.8);
+      }
+      .orbit-8 {
+        width: calc(var(--orbit-unit) * 6.4);
+        height: calc(var(--orbit-unit) * 6.4);
+      }
+
+      /* Popup / Modal */
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.8);
+        display: none;
+        justify-content: center;
+        align-items: center;
+        z-index: 99;
+        backdrop-filter: blur(5px);
+      }
+
+      .modal {
+        width: min(600px, 90vw);
+        background: linear-gradient(135deg, #1b1230, #2a1a4a);
+        border-radius: 20px;
+        padding: 20px 22px 18px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8),
+          0 0 0 1px rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        position: relative;
+        backdrop-filter: blur(10px);
+      }
+
+      .modal h2 {
+        font-size: 26px;
+        margin-bottom: 6px;
+        background: linear-gradient(90deg, #ffb84a, #ff64b8);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .modal p {
+        font-size: 16px;
+        line-height: 1.4;
+        margin-bottom: 10px;
+        opacity: 0.9;
+        white-space: pre-line;
+      }
+
+      .video-box {
+        background: #0b0716;
+        border-radius: 14px;
+        padding: 8px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      .video-box iframe {
+        width: 100%;
+        height: 220px;
+        border: none;
+        border-radius: 10px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .btn {
+        border: none;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .btn-primary {
+        background: linear-gradient(90deg, #ffb84a, #ff64b8);
+        color: #1b1230;
+        font-weight: 600;
+      }
+
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 184, 74, 0.4);
+      }
+
+      .btn-secondary {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
+
+      .close-x {
+        position: absolute;
+        top: 10px;
+        right: 14px;
+        font-size: 18px;
+        cursor: pointer;
+        opacity: 0.7;
+        background: rgba(255, 255, 255, 0.1);
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .close-x:hover {
+        opacity: 1;
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      /* Quiz Styles */
+      .quiz-container {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+      }
+
+      .quiz-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .quiz-header h2 {
+        font-size: 22px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .quiz-header h2::before {
+        content: "🧠";
+      }
+
+      .question-counter {
+        font-size: 14px;
+        opacity: 0.8;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.12);
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        width: 0;
+        background: linear-gradient(90deg, #ffb84a, #ff64b8);
+        transition: width 0.3s ease;
+      }
+
+      .question-text {
+        font-size: 18px;
+        font-weight: 600;
+        margin-bottom: 12px;
+        line-height: 1.4;
+      }
+
+      .options-container {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-bottom: 18px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 12px;
+        padding: 10px 14px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+      }
+
+      .option-badge {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.15);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .option-text {
+        font-size: 15px;
+      }
+
+      .option:hover {
+        transform: translateY(-1px);
+        background: rgba(255, 255, 255, 0.12);
+        border-color: rgba(255, 255, 255, 0.5);
+      }
+
+      .option.selected {
+        background: rgba(255, 184, 74, 0.23);
+        border-color: #ffb84a;
+        box-shadow: 0 0 12px rgba(255, 184, 74, 0.5);
+      }
+
+      .quiz-navigation {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .quiz-btn {
+        padding: 9px 20px;
+        border: none;
+        border-radius: 25px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .quiz-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .prev-btn {
+        background: transparent;
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+      }
+
+      .next-btn,
+      .submit-btn {
+        background: linear-gradient(90deg, #ffb84a, #ff64b8);
+        color: #1b1230;
+        font-weight: 600;
+      }
+
+      .next-btn:hover,
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 184, 74, 0.4);
+      }
+
+      .results-container {
+        display: none;
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+      }
+
+      .score-display {
+        font-size: 24px;
+        font-weight: 700;
+        margin: 10px 0;
+        color: #ffb84a;
+      }
+
+      .results-list {
+        text-align: left;
+        max-height: 260px;
+        overflow-y: auto;
+        padding: 10px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+      }
+
+      .result-item {
+        margin-bottom: 12px;
+        padding: 8px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.05);
+      }
+
+      .result-question {
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      .correct-answer {
+        color: #4caf50;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .user-answer {
+        margin-top: 4px;
+        font-size: 14px;
+      }
+
+      .user-answer.correct {
+        color: #4caf50;
+      }
+
+      .user-answer.incorrect {
+        color: #f44336;
+      }
+
+      @media (max-width: 800px) {
+        .page-wrapper {
+          border-radius: 0;
+          box-shadow: none;
+        }
+        .topic-node {
+          width: 60px;
+          height: 60px;
+        }
+        .rocket {
+          width: 50px;
+          height: 50px;
+        }
+      }
+    </style>
+  </head>
+   <a href="home.html" class="back-button">
+        <i class="fasfa-arrow-left"></i> Back
+    </a>
+  <body>
+    <!-- Space Background -->
+    <div class="space-background"></div>
+    <div class="stars"></div>
+
+    <!-- Floating characters OUTSIDE card -->
+    <div class="floating-astro">🧑‍🚀</div>
+    <div class="floating-ufo">🛸</div>
+    <div class="floating-satellite">🛰️</div>
+
+    <div class="page-wrapper">
+      <div class="page-header">
+        <h1>🚀 Space Maths Mission</h1>
+        <span>Click a planet to start your mission!</span>
+      </div>
+
+      <div class="space-map" id="spaceMap">
+        <!-- Rocket -->
+        <div class="rocket" id="rocket">🚀</div>
+
+        <!-- Orbital rings -->
+        <div class="orbit orbit-1"></div>
+        <div class="orbit orbit-2"></div>
+        <div class="orbit orbit-3"></div>
+        <div class="orbit orbit-4"></div>
+        <div class="orbit orbit-5"></div>
+        <div class="orbit orbit-6"></div>
+        <div class="orbit orbit-7"></div>
+        <div class="orbit orbit-8"></div>
+
+        <!-- SUN in center: All Topics -->
+        <button
+          class="topic-node sun"
+          data-index="8"
+          data-orbit="0"
+          data-angle="0"
+        >
+          <span class="number">☀️</span>
+          <span class="label">All Topics</span>
+        </button>
+
+        <!-- Planet 1: Number Systems & Basic Arithmetic -->
+        <button
+          class="topic-node mercury"
+          data-index="0"
+          data-orbit="1"
+          data-angle="270"
+        >
+          <span class="number">1</span>
+          <span class="label">Number Systems</span>
+        </button>
+
+        <!-- Planet 2: Algebra Basics -->
+        <button
+          class="topic-node venus"
+          data-index="1"
+          data-orbit="2"
+          data-angle="30"
+        >
+          <span class="number">2</span>
+          <span class="label">Algebra</span>
+        </button>
+
+        <!-- Planet 3: Geometry & Shapes -->
+        <button
+          class="topic-node earth"
+          data-index="2"
+          data-orbit="3"
+          data-angle="180"
+        >
+          <span class="number">3</span>
+          <span class="label">Geometry</span>
+        </button>
+
+        <!-- Planet 4: Measurements -->
+        <button
+          class="topic-node mars"
+          data-index="3"
+          data-orbit="4"
+          data-angle="315"
+        >
+          <span class="number">4</span>
+          <span class="label">Measurements</span>
+        </button>
+
+        <!-- Planet 5: Data Handling & Probability -->
+        <button
+          class="topic-node jupiter"
+          data-index="4"
+          data-orbit="5"
+          data-angle="90"
+        >
+          <span class="number">5</span>
+          <span class="label">Data & Prob.</span>
+        </button>
+
+        <!-- Planet 6: Ratios, Percentages & Proportions -->
+        <button
+          class="topic-node saturn"
+          data-index="5"
+          data-orbit="6"
+          data-angle="225"
+        >
+          <span class="number">6</span>
+          <span class="label">Ratios & %</span>
+        </button>
+
+        <!-- Planet 7: Logical Thinking & Puzzles -->
+        <button
+          class="topic-node uranus"
+          data-index="6"
+          data-orbit="7"
+          data-angle="0"
+        >
+          <span class="number">7</span>
+          <span class="label">Logic & Puzzles</span>
+        </button>
+
+        <!-- Planet 8: Interest (Simple & Compound) -->
+        <button
+          class="topic-node neptune"
+          data-index="7"
+          data-orbit="8"
+          data-angle="135"
+        >
+          <span class="number">8</span>
+          <span class="label">Interest</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- LEARNING / QUIZ INTRO MODAL -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal">
+        <div class="close-x" id="closeModal">&times;</div>
+        <h2 id="modalTitle">Topic Title</h2>
+        <p id="modalDescription">Topic description goes here.</p>
+
+        <div class="video-box" id="videoBox">
+          <iframe id="modalVideo" src="C:\Users\sweth\OneDrive\Desktop\Elearning\bodmass.mp4" allowfullscreen></iframe>
+        </div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="closeButton">Close</button>
+          <button class="btn btn-primary" id="quizButton">Take Quiz</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUIZ MODAL -->
+    <div class="modal-overlay" id="quizModalOverlay">
+      <div class="modal">
+        <div class="close-x" id="closeQuizModal">&times;</div>
+
+        <!-- Quiz Container -->
+        <div class="quiz-container" id="quizContainer">
+          <div class="quiz-header">
+            <h2 id="quizTitle">Math Quiz</h2>
+            <div class="question-counter" id="questionCounter">
+              Question 1 of 5
+            </div>
+          </div>
+
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
+          <div class="question-text" id="questionText"></div>
+
+          <div class="options-container" id="optionsContainer"></div>
+
+          <div class="quiz-navigation">
+            <button class="quiz-btn prev-btn" id="prevBtn" disabled>
+              Previous
+            </button>
+            <button class="quiz-btn next-btn" id="nextBtn">Next</button>
+            <button
+              class="quiz-btn submit-btn"
+              id="submitBtn"
+              style="display: none"
+            >
+              Submit Quiz
+            </button>
+          </div>
+        </div>
+
+        <!-- Results Container -->
+        <div class="results-container" id="resultsContainer">
+          <h2>Quiz Results</h2>
+          <div class="score-display" id="scoreDisplay"></div>
+          <p id="resultsMessage"></p>
+
+          <div class="results-list" id="resultsList"></div>
+
+          <div class="modal-footer">
+            <button class="btn btn-secondary" id="retryButton">
+              Try Again
+            </button>
+            <button class="btn btn-primary" id="closeResultsButton">
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // ======= TOPIC DATA WITH WORKING YOUTUBE LINKS =======
+      const topics = [
+        {
+          title: "Number Systems & Basic Arithmetic",
+          description:
+            "You’ve landed on the Number Systems planet! 🧮\nWhole numbers, integers, decimals, fractions and BODMAS all live here.\nRevise your basics, then take the quiz to test your foundation.",
+          video: "bodmass.mp4",
+        },
+        {
+          title: "Algebra Basics",
+          description:
+            "Welcome to the Algebra planet! 🔤\nExpressions, equations, variables and simple formulas.\nPractice solving easy linear equations in the quiz.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Geometry & Shapes",
+          description:
+            "Geometry planet unlocked! 📐\nLines, angles, triangles, quadrilaterals, perimeter, area and coordinates.\nExplore shapes and their properties in the quiz.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Measurements",
+          description:
+            "You reached the Measurements planet! ⚖️⏱️\nLength, mass, time, temperature and a tiny taste of speed = distance/time.\nConvert units and work with real-life measurements.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Data Handling & Probability",
+          description:
+            "Data planet discovered! 📊🎲\nBar graphs, pie charts, mean, median, mode and basic probability with coins and dice.\nAnswer questions based on data and chances.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Ratios, Percentages & Proportions",
+          description:
+            "Ratios & Percentages planet! 📈🧃\nSolve ratio problems, percentage increase/decrease and simple profit-loss & discounts.\nVery useful for money and real-life maths.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Logical Thinking & Puzzles",
+          description:
+            "Logic & Puzzle station reached! 🧩🧠\nPatterns, number puzzles and simple reasoning tasks.\nTrain your brain to spot patterns and make smart conclusions.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Simple & Compound Interest",
+          description:
+            "Interest planet unlocked! 💰\nLearn how money grows with simple and compound interest.\nPerfect intro for future money & banking concepts.",
+          video: "geometry.mp4",
+        },
+        {
+          title: "Galaxy Challenge",
+          description:
+            "Final mission unlocked! 🌌\nThis BIG quiz mixes questions from all 8 topics: number systems, algebra, geometry, measurements, data, ratios, logic and interest.",
+          video: null, // no video for all topics
+        },
+      ];
+
+      // ======= QUIZ DATA (8 topics + overall) =======
+      const quizData = {
+        0: [
+          // Number Systems & Basic Arithmetic
+          {
+            question: "Which of these is an integer but NOT a whole number?",
+            options: ["-3", "0", "2.5", "3/4"],
+            correct: 0,
+          },
+          {
+            question: "Using BODMAS, what is 36 ÷ 4 + 5 × 2?",
+            options: ["23", "19", "26", "28"],
+            correct: 1, // 9 + 10 = 19
+          },
+          {
+            question: "What is the LCM of 6 and 8?",
+            options: ["12", "18", "24", "48"],
+            correct: 2,
+          },
+          {
+            question: "Which decimal is equal to 3/4?",
+            options: ["0.34", "0.43", "0.75", "0.85"],
+            correct: 2,
+          },
+          {
+            question: "Which number is a multiple of both 3 and 5?",
+            options: ["10", "12", "15", "25"],
+            correct: 2,
+          },
+        ],
+        1: [
+          // Algebra Basics
+          {
+            question: "If x = 5, what is 3x + 4?",
+            options: ["15", "17", "19", "21"],
+            correct: 2,
+          },
+          {
+            question: "Solve the equation: x + 7 = 19",
+            options: ["x = 10", "x = 11", "x = 12", "x = 13"],
+            correct: 2,
+          },
+          {
+            question: "If a = 4, what is 2(a + 3)?",
+            options: ["10", "12", "14", "16"],
+            correct: 2,
+          },
+          {
+            question:
+              'Which equation matches: "A number n doubled then increased by 5 gives 21"?',
+            options: [
+              "2n + 5 = 21",
+              "2n − 5 = 21",
+              "n + 5 = 21",
+              "n − 5 = 21",
+            ],
+            correct: 0,
+          },
+          {
+            question: "Solve: 5y − 3 = 17",
+            options: ["y = 2", "y = 3", "y = 4", "y = 5"],
+            correct: 2,
+          },
+        ],
+        2: [
+          // Geometry & Shapes
+          {
+            question:
+              "What is the sum of the interior angles in a triangle?",
+            options: ["90°", "120°", "180°", "360°"],
+            correct: 2,
+          },
+          {
+            question:
+              "Find the perimeter of a rectangle with length 8 cm and breadth 5 cm.",
+            options: ["13 cm", "16 cm", "26 cm", "40 cm"],
+            correct: 2,
+          },
+          {
+            question:
+              "What is the area of a square with side length 9 cm?",
+            options: ["18 cm²", "36 cm²", "72 cm²", "81 cm²"],
+            correct: 3,
+          },
+          {
+            question: "How many right angles does a rectangle have?",
+            options: ["1", "2", "3", "4"],
+            correct: 3,
+          },
+          {
+            question:
+              "The point (3, 2) lies in which quadrant of the coordinate plane?",
+            options: [
+              "First quadrant",
+              "Second quadrant",
+              "Third quadrant",
+              "Fourth quadrant",
+            ],
+            correct: 0,
+          },
+        ],
+        3: [
+          // Measurements
+          {
+            question: "2500 metres is equal to how many kilometres?",
+            options: ["0.25 km", "2.5 km", "25 km", "250 km"],
+            correct: 1,
+          },
+          {
+            question: "3 hours 30 minutes is equal to how many minutes?",
+            options: ["150 minutes", "180 minutes", "200 minutes", "210 minutes"],
+            correct: 3,
+          },
+          {
+            question:
+              "Which temperature is closest to normal room temperature?",
+            options: ["5°C", "18°C", "60°C", "100°C"],
+            correct: 1,
+          },
+          {
+            question:
+              "A car travels 120 km in 3 hours. What is its speed?",
+            options: ["30 km/h", "35 km/h", "40 km/h", "45 km/h"],
+            correct: 2,
+          },
+          {
+            question: "750 g is equal to how many kilograms?",
+            options: ["0.075 kg", "0.75 kg", "7.5 kg", "75 kg"],
+            correct: 1,
+          },
+        ],
+        4: [
+          // Data Handling & Probability
+          {
+            question: "In the data: 2, 4, 4, 5, 6, 6, 6, 7, what is the mode?",
+            options: ["2", "4", "6", "7"],
+            correct: 2,
+          },
+          {
+            question: "Find the mean of 10, 14, 16, 20.",
+            options: ["12", "14", "15", "16"],
+            correct: 2,
+          },
+          {
+            question: "What is the median of 3, 5, 7, 9, 11?",
+            options: ["5", "7", "8", "9"],
+            correct: 1,
+          },
+          {
+            question:
+              "When a fair coin is tossed once, what is the probability of getting HEADS?",
+            options: ["1/4", "1/3", "1/2", "2/3"],
+            correct: 2,
+          },
+          {
+            question:
+              "When a fair die is rolled, what is the probability of getting an even number?",
+            options: ["1/6", "1/3", "1/2", "2/3"],
+            correct: 2,
+          },
+        ],
+        5: [
+          // Ratios, Percentages & Proportions
+          {
+            question: "Simplify the ratio 12 : 18.",
+            options: ["2 : 3", "3 : 4", "4 : 5", "5 : 6"],
+            correct: 0,
+          },
+          {
+            question: "What is 25% of 160?",
+            options: ["20", "30", "40", "50"],
+            correct: 2,
+          },
+          {
+            question:
+              "A shirt costs ₹800. There is a 10% discount. What is the selling price?",
+            options: ["₹700", "₹720", "₹750", "₹780"],
+            correct: 1,
+          },
+          {
+            question:
+              "Sugar and flour are mixed in the ratio 2 : 5. If there are 500 g of flour, how much sugar is used?",
+            options: ["100 g", "150 g", "200 g", "250 g"],
+            correct: 2,
+          },
+          {
+            question:
+              "A shopkeeper buys a toy for ₹150 and sells it for ₹195. What is the profit percentage?",
+            options: ["20%", "25%", "30%", "35%"],
+            correct: 2,
+          },
+        ],
+        6: [
+          // Logical Thinking & Puzzles
+          {
+            question:
+              "What comes next in the pattern: 5, 10, 15, 20, ... ?",
+            options: ["22", "23", "24", "25"],
+            correct: 3,
+          },
+          {
+            question:
+              "What comes next in the pattern: 2, 4, 7, 11, 16, ...?",
+            options: ["18", "20", "21", "22"],
+            correct: 3,
+          },
+          {
+            question: "Which one is the ODD one out?",
+            options: ["Square", "Triangle", "Cube", "Circle"],
+            correct: 2, // cube is 3D
+          },
+          {
+            question:
+              "All planets in a game are blue. Nova is a planet in the game. What can we say?",
+            options: [
+              "Nova might be blue or red",
+              "Nova is not blue",
+              "Nova is blue",
+              "We need more information",
+            ],
+            correct: 2,
+          },
+          {
+            question:
+              "A clock shows 3:15. After 45 minutes, what time will it be?",
+            options: ["3:45", "4:00", "4:15", "4:30"],
+            correct: 1,
+          },
+        ],
+        7: [
+          // Simple & Compound Interest
+          {
+            question: "Which is the correct formula for Simple Interest (SI)?",
+            options: [
+              "P × R × T",
+              "(P × R × T) / 100",
+              "(P + R + T) / 100",
+              "(P × T) / R",
+            ],
+            correct: 1,
+          },
+          {
+            question:
+              "Find the simple interest on ₹1000 at 5% per year for 2 years.",
+            options: ["₹80", "₹90", "₹100", "₹120"],
+            correct: 2,
+          },
+          {
+            question:
+              "A sum of ₹2000 is invested at 10% simple interest per year for 3 years. What is the total amount at the end?",
+            options: ["₹2200", "₹2400", "₹2500", "₹2600"],
+            correct: 3,
+          },
+          {
+            question:
+              "₹1000 is invested at 10% compound interest per year for 2 years (compounded yearly). What is the amount?",
+            options: ["₹1100", "₹1200", "₹1210", "₹1300"],
+            correct: 2,
+          },
+          {
+            question:
+              "Two banks offer 8% interest. Bank A gives simple interest. Bank B gives compound interest. For the same time and principal, which gives MORE money?",
+            options: [
+              "Both give the same",
+              "Simple interest gives more",
+              "Compound interest gives more",
+              "Cannot be compared",
+            ],
+            correct: 2,
+          },
+        ],
+        8: [
+          // Overall Galaxy Challenge – mixed 20 questions
+          {
+            question: "Using BODMAS, what is 45 ÷ 5 + 7 × 2?",
+            options: ["19", "21", "23", "25"],
+            correct: 2,
+          },
+          {
+            question: "Which of these numbers is prime?",
+            options: ["21", "29", "39", "51"],
+            correct: 1,
+          },
+          {
+            question: "Solve the equation: x − 9 = 15.",
+            options: ["x = 5", "x = 18", "x = 24", "x = 6"],
+            correct: 2,
+          },
+          {
+            question: "If y = 6, what is 4y + 3?",
+            options: ["24", "25", "26", "27"],
+            correct: 3,
+          },
+          {
+            question:
+              "Find the perimeter of a rectangle with length 12 m and breadth 9 m.",
+            options: ["30 m", "33 m", "40 m", "42 m"],
+            correct: 3,
+          },
+          {
+            question:
+              "What is the volume of a cuboid 5 cm × 3 cm × 2 cm?",
+            options: ["10 cm³", "20 cm³", "30 cm³", "60 cm³"],
+            correct: 2,
+          },
+          {
+            question: "1.5 km is equal to how many metres?",
+            options: ["150 m", "1500 m", "15 m", "15,000 m"],
+            correct: 1,
+          },
+          {
+            question: "A bike travels 90 km in 3 hours. What is its speed?",
+            options: ["20 km/h", "25 km/h", "30 km/h", "45 km/h"],
+            correct: 2,
+          },
+          {
+            question: "What is the mean of 6, 9, 10, 15?",
+            options: ["8", "9", "10", "11"],
+            correct: 2,
+          },
+          {
+            question:
+              "When a fair coin is tossed once, what is the probability of getting a TAIL?",
+            options: ["1/4", "1/3", "1/2", "1"],
+            correct: 2,
+          },
+          {
+            question: "Simplify the ratio 18 : 27.",
+            options: ["2 : 3", "3 : 5", "3 : 2", "4 : 5"],
+            correct: 0,
+          },
+          {
+            question: "15% of ₹200 is:",
+            options: ["₹20", "₹25", "₹30", "₹40"],
+            correct: 2,
+          },
+          {
+            question:
+              "A shirt costs ₹500. There is a 20% discount. What is the selling price?",
+            options: ["₹380", "₹400", "₹420", "₹450"],
+            correct: 1,
+          },
+          {
+            question:
+              "What comes next in the pattern: 12, 17, 22, 27, ... ?",
+            options: ["29", "30", "31", "32"],
+            correct: 3,
+          },
+          {
+            question: "Which shape has exactly ONE line of symmetry?",
+            options: [
+              "Scalene triangle",
+              "Isosceles triangle",
+              "Rectangle",
+              "Circle",
+            ],
+            correct: 1,
+          },
+          {
+            question:
+              "Find the simple interest on ₹1500 at 4% per year for 3 years.",
+            options: ["₹120", "₹150", "₹180", "₹200"],
+            correct: 2,
+          },
+          {
+            question:
+              "Amount on ₹2000 at 5% compound interest per year for 2 years (compounded yearly) is:",
+            options: ["₹2100", "₹2200", "₹2205", "₹2300"],
+            correct: 2,
+          },
+          {
+            question:
+              "Which of these is an integer but NOT a whole number?",
+            options: ["-4", "0", "2.5", "3/4"],
+            correct: 0,
+          },
+          {
+            question:
+              'Which equation matches: "When 8 is added to a number k, the result is 25"?',
+            options: ["k − 8 = 25", "k + 8 = 25", "8k = 25", "k / 8 = 25"],
+            correct: 1,
+          },
+          {
+            question: "Which data set has mode 4?",
+            options: [
+              "1, 2, 3, 4",
+              "2, 4, 4, 5",
+              "3, 3, 4, 4",
+              "1, 4, 5, 6",
+            ],
+            correct: 1,
+          },
+        ],
+      };
+
+      const rocket = document.getElementById("rocket");
+      const spaceMap = document.getElementById("spaceMap");
+      const nodes = document.querySelectorAll(".topic-node");
+
+      const modalOverlay = document.getElementById("modalOverlay");
+      const closeModal = document.getElementById("closeModal");
+      const closeButton = document.getElementById("closeButton");
+      const quizButton = document.getElementById("quizButton");
+      const modalTitle = document.getElementById("modalTitle");
+      const modalDescription = document.getElementById("modalDescription");
+      const videoBox = document.getElementById("videoBox");
+      const modalVideo = document.getElementById("modalVideo");
+
+      const quizModalOverlay = document.getElementById("quizModalOverlay");
+      const closeQuizModal = document.getElementById("closeQuizModal");
+      const quizContainer = document.getElementById("quizContainer");
+      const resultsContainer = document.getElementById("resultsContainer");
+      const quizTitle = document.getElementById("quizTitle");
+      const questionCounter = document.getElementById("questionCounter");
+      const questionText = document.getElementById("questionText");
+      const optionsContainer = document.getElementById("optionsContainer");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const submitBtn = document.getElementById("submitBtn");
+      const scoreDisplay = document.getElementById("scoreDisplay");
+      const resultsMessage = document.getElementById("resultsMessage");
+      const resultsList = document.getElementById("resultsList");
+      const retryButton = document.getElementById("retryButton");
+      const closeResultsButton = document.getElementById("closeResultsButton");
+      const progressFill = document.getElementById("progressFill");
+
+      let rocketPos = { x: null, y: null };
+      let currentTopicIndex = 0;
+
+      // Quiz State
+      let currentQuestion = 0;
+      let userAnswers = [];
+      let quizQuestions = [];
+
+      function getNodeCenter(node) {
+        const mapRect = spaceMap.getBoundingClientRect();
+        const nodeRect = node.getBoundingClientRect();
+
+        const x = nodeRect.left - mapRect.left + nodeRect.width / 2;
+        const y = nodeRect.top - mapRect.top + nodeRect.height / 2;
+        return { x, y };
+      }
+
+      function placeRocketInstant(node) {
+        const { x, y } = getNodeCenter(node);
+        rocket.style.left = x + "px";
+        rocket.style.top = y + "px";
+        rocketPos = { x, y };
+      }
+
+      function animateRocketTo(node, callback) {
+        const target = getNodeCenter(node);
+
+        if (rocketPos.x === null || rocketPos.y === null) {
+          placeRocketInstant(node);
+          if (callback) callback();
+          return;
+        }
+
+        const startX = rocketPos.x;
+        const startY = rocketPos.y;
+        const deltaX = target.x - startX;
+        const deltaY = target.y - startY;
+        const duration = 800;
+        const startTime = performance.now();
+
+        function step(now) {
+          const elapsed = now - startTime;
+          const t = Math.min(elapsed / duration, 1);
+
+          const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+          const x = startX + deltaX * ease;
+          const y = startY + deltaY * ease;
+
+          rocket.style.left = x + "px";
+          rocket.style.top = y + "px";
+
+          const angle = Math.atan2(deltaY, deltaX);
+          rocket.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
+
+          if (t < 1) {
+            requestAnimationFrame(step);
+          } else {
+            rocket.style.transform = "translate(-50%, -50%)";
+            rocketPos = { x: target.x, y: target.y };
+            setTimeout(() => {
+              if (callback) callback();
+            }, 2000);
+          }
+        }
+
+        requestAnimationFrame(step);
+      }
+
+      function showTopicModal(index) {
+        const topic = topics[index];
+        currentTopicIndex = index;
+
+        modalTitle.textContent = topic.title;
+        modalDescription.textContent = topic.description;
+
+        if (topic.video) {
+          videoBox.style.display = "block";
+          modalVideo.src = topic.video;
+        } else {
+          videoBox.style.display = "none";
+          modalVideo.src = "";
+        }
+
+        modalOverlay.style.display = "flex";
+      }
+
+      function startQuiz() {
+        quizQuestions = quizData[currentTopicIndex] || quizData[0];
+
+        currentQuestion = 0;
+        userAnswers = new Array(quizQuestions.length).fill(null);
+
+        modalOverlay.style.display = "none";
+        quizModalOverlay.style.display = "flex";
+
+        quizTitle.textContent =
+          currentTopicIndex === 8
+            ? "Galaxy Challenge Quiz"
+            : `${topics[currentTopicIndex].title} Quiz`;
+
+        quizContainer.style.display = "flex";
+        resultsContainer.style.display = "none";
+
+        loadQuestion();
+      }
+
+      function loadQuestion() {
+        const question = quizQuestions[currentQuestion];
+
+        questionCounter.textContent = `Question ${
+          currentQuestion + 1
+        } of ${quizQuestions.length}`;
+        questionText.textContent = question.question;
+
+        const progressPercent =
+          ((currentQuestion + 1) / quizQuestions.length) * 100;
+        progressFill.style.width = progressPercent + "%";
+
+        optionsContainer.innerHTML = "";
+        question.options.forEach((option, index) => {
+          const optionElement = document.createElement("div");
+          optionElement.className =
+            "option" +
+            (userAnswers[currentQuestion] === index ? " selected" : "");
+
+          const badge = document.createElement("div");
+          badge.className = "option-badge";
+          badge.textContent = String.fromCharCode(65 + index);
+
+          const text = document.createElement("div");
+          text.className = "option-text";
+          text.textContent = option;
+
+          optionElement.appendChild(badge);
+          optionElement.appendChild(text);
+
+          optionElement.addEventListener("click", () => selectOption(index));
+          optionsContainer.appendChild(optionElement);
+        });
+
+        prevBtn.disabled = currentQuestion === 0;
+
+        if (currentQuestion === quizQuestions.length - 1) {
+          nextBtn.style.display = "none";
+          submitBtn.style.display = "block";
+        } else {
+          nextBtn.style.display = "block";
+          submitBtn.style.display = "none";
+        }
+      }
+
+      function selectOption(optionIndex) {
+        userAnswers[currentQuestion] = optionIndex;
+        loadQuestion();
+      }
+
+      function nextQuestion() {
+        if (userAnswers[currentQuestion] === null) {
+          alert("Pick an answer before going to the next question 🌟");
+          return;
+        }
+        currentQuestion++;
+        loadQuestion();
+      }
+
+      function prevQuestion() {
+        currentQuestion--;
+        loadQuestion();
+      }
+
+      function submitQuiz() {
+        if (userAnswers[currentQuestion] === null) {
+          alert("Pick an answer before submitting 🚀");
+          return;
+        }
+
+        let score = 0;
+        quizQuestions.forEach((question, index) => {
+          if (userAnswers[index] === question.correct) score++;
+        });
+
+        showResults(score);
+      }
+
+      function showResults(score) {
+        quizContainer.style.display = "none";
+        resultsContainer.style.display = "flex";
+
+        const percentage = (score / quizQuestions.length) * 100;
+        scoreDisplay.textContent = `${score}/${quizQuestions.length}`;
+
+        if (percentage >= 80) {
+          resultsMessage.textContent =
+            "Excellent! You're a math superstar! 🚀✨";
+        } else if (percentage >= 60) {
+          resultsMessage.textContent =
+            "Nice work! Keep practicing and you'll fly even higher! 🌟";
+        } else {
+          resultsMessage.textContent =
+            "Good try! You can always retry the mission 💫";
+        }
+
+        resultsList.innerHTML = "";
+        quizQuestions.forEach((question, index) => {
+          const resultItem = document.createElement("div");
+          resultItem.className = "result-item";
+
+          const isCorrect = userAnswers[index] === question.correct;
+          const userAnswerText =
+            userAnswers[index] !== null
+              ? question.options[userAnswers[index]]
+              : "Not answered";
+
+          resultItem.innerHTML = `
+            <div class="result-question">${index + 1}. ${
+            question.question
+          }</div>
+            <div class="correct-answer">Correct: ${
+              question.options[question.correct]
+            }</div>
+            <div class="user-answer ${isCorrect ? "correct" : "incorrect"}">
+              Your answer: ${userAnswerText} ${isCorrect ? "✓" : "✗"}
+            </div>
+          `;
+
+          resultsList.appendChild(resultItem);
+        });
+      }
+
+      function retryQuiz() {
+        startQuiz();
+      }
+
+      function closeQuiz() {
+        quizModalOverlay.style.display = "none";
+      }
+
+      const orbitMultipliers = [0, 2.2, 2.8, 3.4, 4.0, 4.6, 5.2, 5.8, 6.4];
+
+      function positionPlanets() {
+        const mapRect = spaceMap.getBoundingClientRect();
+        const minDimension = Math.min(mapRect.width, mapRect.height);
+        const orbitUnit = minDimension / 7;
+
+        spaceMap.style.setProperty("--orbit-unit", orbitUnit + "px");
+
+        nodes.forEach((node) => {
+          const orbitIndex = parseInt(node.dataset.orbit, 10);
+          const angle = parseInt(node.dataset.angle, 10);
+
+          if (orbitIndex === 0) {
+            node.style.top = "50%";
+            node.style.left = "50%";
+            node.style.transform = "translate(-50%, -50%)";
+          } else {
+            const radius = (orbitMultipliers[orbitIndex] * orbitUnit) / 2;
+            const angleRad = (angle * Math.PI) / 180;
+            const x = Math.cos(angleRad) * radius;
+            const y = Math.sin(angleRad) * radius;
+
+            node.style.top = "50%";
+            node.style.left = "50%";
+            node.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+          }
+        });
+      }
+
+      window.addEventListener("load", () => {
+        positionPlanets();
+        placeRocketInstant(nodes[0]);
+      });
+
+      window.addEventListener("resize", () => {
+        positionPlanets();
+      });
+
+      nodes.forEach((node) => {
+        node.addEventListener("click", () => {
+          const index = parseInt(node.dataset.index, 10);
+
+          nodes.forEach((n) => (n.disabled = true));
+
+          animateRocketTo(node, () => {
+            showTopicModal(index);
+            nodes.forEach((n) => (n.disabled = false));
+          });
+        });
+      });
+
+      function hideModal() {
+        modalOverlay.style.display = "none";
+        modalVideo.src = "";
+      }
+
+      closeModal.addEventListener("click", hideModal);
+      closeButton.addEventListener("click", hideModal);
+      modalOverlay.addEventListener("click", (e) => {
+        if (e.target === modalOverlay) hideModal();
+      });
+
+      quizButton.addEventListener("click", startQuiz);
+
+      prevBtn.addEventListener("click", prevQuestion);
+      nextBtn.addEventListener("click", nextQuestion);
+      submitBtn.addEventListener("click", submitQuiz);
+
+      closeQuizModal.addEventListener("click", closeQuiz);
+      closeResultsButton.addEventListener("click", closeQuiz);
+      quizModalOverlay.addEventListener("click", (e) => {
+        if (e.target === quizModalOverlay) closeQuiz();
+      });
+
+      retryButton.addEventListener("click", retryQuiz);
+    </script>
+  </body>
+</html>

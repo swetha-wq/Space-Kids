@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmic Learning - Kids Doubt Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #0b0b2d;
+            color: #ffffff;
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(white, rgba(255,255,255,.2) 2px, transparent 5px),
+                radial-gradient(white, rgba(255,255,255,.15) 1px, transparent 3px),
+                radial-gradient(white, rgba(255,255,255,.1) 2px, transparent 4px);
+            background-size: 550px 550px, 350px 350px, 250px 250px;
+            background-position: 0 0, 40px 60px, 130px 270px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            position: relative;
+        }
+
+        .title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #6a67ff, #00d4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(106, 103, 255, 0.5);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: #a3a7ff;
+            margin-bottom: 30px;
+        }
+
+        .chat-container {
+            background: rgba(16, 18, 63, 0.8);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #2a2d7c;
+            height: 500px;
+            overflow-y: auto;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            max-width: 80%;
+            padding: 15px 20px;
+            border-radius: 18px;
+            line-height: 1.5;
+            position: relative;
+            animation: floatIn 0.4s ease-out;
+        }
+
+        @keyframes floatIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .bot-message {
+            background: linear-gradient(135deg, #2d2b7c, #1a1a52);
+            border-bottom-left-radius: 5px;
+            align-self: flex-start;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3d3ba3;
+        }
+
+        .user-message {
+            background: linear-gradient(135deg, #3a38a3, #25237a);
+            border-bottom-right-radius: 5px;
+            align-self: flex-end;
+            margin-left: auto;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #4d4bc5;
+        }
+
+        .options-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .option-btn {
+            background: linear-gradient(to right, #6a67ff, #4a47d0);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(106, 103, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .option-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(106, 103, 255, 0.5);
+            background: linear-gradient(to right, #7a77ff, #5a57e0);
+        }
+
+        .option-btn:active {
+            transform: translateY(1px);
+        }
+
+        .option-btn::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -30px;
+            width: 20px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+            transition: all 0.5s;
+        }
+
+        .option-btn:hover::after {
+            left: calc(100% + 30px);
+        }
+
+        .content-area {
+            background: rgba(30, 32, 80, 0.7);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border-left: 5px solid #6a67ff;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .content-area h3 {
+            color: #a3a7ff;
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #6a67ff;
+            padding-bottom: 8px;
+        }
+
+        .content-area p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+            color: #d0d3ff;
+        }
+
+        .content-area ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .content-area li {
+            margin-bottom: 10px;
+            color: #d0d3ff;
+        }
+
+        .example-box {
+            background: rgba(42, 45, 124, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 4px solid #00d4ff;
+        }
+
+        .input-container {
+            display: flex;
+            padding: 15px;
+            background: rgba(16, 18, 63, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            border: 1px solid #2a2d7c;
+        }
+
+        .restart-btn {
+            background: linear-gradient(to right, #ff6b9d, #ff4757);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            padding: 14px 28px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.3);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 7px 20px rgba(255, 107, 157, 0.5);
+            background: linear-gradient(to right, #ff7bad, #ff5767);
+        }
+
+        .planet {
+            position: absolute;
+            border-radius: 50%;
+            z-index: 0;
+        }
+
+        .planet-1 {
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle at 30px 30px, #6a67ff, #2a2d7c);
+            top: 10%;
+            right: 5%;
+            box-shadow: 0 0 30px #6a67ff;
+        }
+
+        .planet-2 {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle at 20px 20px, #00d4ff, #2a2d7c);
+            bottom: 15%;
+            left: 5%;
+            box-shadow: 0 0 20px #00d4ff;
+        }
+
+        .rocket {
+            position: absolute;
+            font-size: 2rem;
+            top: 20%;
+            left: 8%;
+            animation: float 6s ease-in-out infinite;
+            transform: rotate(45deg);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) rotate(45deg); }
+            50% { transform: translateY(-20px) rotate(45deg); }
+            100% { transform: translateY(0) rotate(45deg); }
+        }
+         .back-button {
+            position: absolute;
+            top: 8vh;
+            left: 2vh;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(106, 0, 255, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(106, 0, 255, 0.6);
+        }
+        
+        .back-button i {
+            font-size: 1rem;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 5s infinite;
+        }
+
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #6a67ff;
+            font-size: 0.9rem;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .title {
+                font-size: 2.5rem;
+            }
+            
+            .message {
+                max-width: 90%;
+            }
+            
+            .option-btn {
+                padding: 10px 18px;
+                font-size: 0.9rem;
+            }
+            
+            .planet-1, .planet-2 {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+     <a href="home.html" class="back-button">
+        <i class="fasfa-arrow-left"></i> Back
+    </a>
+    <div class="stars" id="stars"></div>
+    
+    <div class="planet planet-1"></div>
+    <div class="planet planet-2"></div>
+    <div class="rocket">🚀</div>
+    
+    <div class="container">
+        <header>
+            <h1 class="title">Cosmic Learning</h1>
+            <div class="subtitle">Your Intergalactic Doubt Assistant</div>
+        </header>
+        
+        <div class="chat-container" id="chatContainer">
+            <!-- Chat messages will be added here dynamically -->
+        </div>
+        
+        <div class="input-container">
+            <button class="restart-btn" id="restartBtn">Start New Mission</button>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2023 Cosmic Learning Academy. Explore the universe of knowledge!
+    </footer>
+
+    <script>
+        // Create twinkling stars
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size
+                const size = Math.random() * 3;
+                
+                // Random animation delay
+                const delay = Math.random() * 5;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // Define the content for each topic
+        const topicContent = {
+            maths: {
+                "Number System": {
+                    title: "Number System",
+                    content: `
+                        <p>The number system is a way to represent numbers. We use different types of numbers:</p>
+                        <ul>
+                            <li><strong>Natural Numbers:</strong> Counting numbers like 1, 2, 3, 4...</li>
+                            <li><strong>Whole Numbers:</strong> Natural numbers including 0 (0, 1, 2, 3...)</li>
+                            <li><strong>Integers:</strong> Positive and negative whole numbers (-3, -2, -1, 0, 1, 2, 3)</li>
+                            <li><strong>Fractions:</strong> Parts of a whole like 1/2, 3/4, 2/5</li>
+                            <li><strong>Decimals:</strong> Numbers with decimal points like 0.5, 3.14, 2.75</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> If you have 8 planets in our solar system and you count them starting from Mercury (1) to Neptune (8), you're using natural numbers!
+                        </div>
+                    `
+                },
+                "Data & Probability": {
+                    title: "Data & Probability",
+                    content: `
+                        <p>Data is information we collect. Probability tells us how likely something is to happen.</p>
+                        <h4>Types of Data:</h4>
+                        <ul>
+                            <li><strong>Numerical Data:</strong> Data with numbers (like planet diameters, distances from the sun)</li>
+                            <li><strong>Categorical Data:</strong> Data in categories (like planet types: gas giants, terrestrial planets)</li>
+                        </ul>
+                        <h4>Probability:</h4>
+                        <p>Probability ranges from 0 to 1:</p>
+                        <ul>
+                            <li>0 means something will never happen</li>
+                            <li>1 means something will definitely happen</li>
+                            <li>0.5 means there's a 50% chance</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> The probability of a meteor hitting Earth in any given year is very low, about 0.000001%!
+                        </div>
+                    `
+                },
+                "Measurements": {
+                    title: "Measurements",
+                    content: `
+                        <p>We measure things to know their size, length, weight, or capacity.</p>
+                        <h4>Length:</h4>
+                        <ul>
+                            <li>Millimeter (mm) - very small</li>
+                            <li>Centimeter (cm) - about the width of your finger</li>
+                            <li>Meter (m) - about the height of a door</li>
+                            <li>Kilometer (km) - long distances</li>
+                            <li>Astronomical Unit (AU) - distance from Earth to Sun</li>
+                            <li>Light-year - distance light travels in one year</li>
+                        </ul>
+                        <h4>Weight:</h4>
+                        <ul>
+                            <li>Gram (g) - light objects</li>
+                            <li>Kilogram (kg) - heavier objects</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> The Moon is about 384,400 km away from Earth. That's like traveling around Earth 9.5 times!
+                        </div>
+                    `
+                },
+                "Interest": {
+                    title: "Interest",
+                    content: `
+                        <p>Interest is extra money you earn when you save money in a bank, or extra money you pay when you borrow money.</p>
+                        <h4>Simple Interest:</h4>
+                        <p>Simple Interest = (Principal × Rate × Time) ÷ 100</p>
+                        <ul>
+                            <li><strong>Principal:</strong> The original amount of money</li>
+                            <li><strong>Rate:</strong> The percentage of interest per year</li>
+                            <li><strong>Time:</strong> How long the money is saved or borrowed (in years)</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> If you save $100 for a telescope with 5% interest for 2 years:<br>
+                            Interest = (100 × 5 × 2) ÷ 100 = $10<br>
+                            Total money after 2 years = $100 + $10 = $110
+                        </div>
+                    `
+                },
+                "Ratio": {
+                    title: "Ratio",
+                    content: `
+                        <p>A ratio compares two quantities. It shows how much of one thing there is compared to another.</p>
+                        <p>Ratios can be written in different ways:</p>
+                        <ul>
+                            <li>Using a colon: 3:2</li>
+                            <li>As a fraction: 3/2</li>
+                            <li>In words: 3 to 2</li>
+                        </ul>
+                        <h4>Equivalent Ratios:</h4>
+                        <p>Ratios that represent the same comparison. For example, 2:3 is equivalent to 4:6.</p>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> The ratio of Earth's diameter to Mars' diameter is approximately 2:1. Earth is about twice as wide as Mars!
+                        </div>
+                    `
+                },
+                "Algebra": {
+                    title: "Algebra",
+                    content: `
+                        <p>Algebra uses letters (called variables) to represent unknown numbers.</p>
+                        <h4>Basic Concepts:</h4>
+                        <ul>
+                            <li><strong>Variables:</strong> Letters that stand for numbers (like x, y, z)</li>
+                            <li><strong>Expressions:</strong> Combinations of numbers and variables (like 2x + 3)</li>
+                            <li><strong>Equations:</strong> Mathematical sentences with an equals sign (like 2x + 3 = 7)</li>
+                        </ul>
+                        <h4>Solving Equations:</h4>
+                        <p>To solve an equation, find the value of the variable that makes the equation true.</p>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> If a rocket travels at 5x km/h and covers 100 km in 4 hours:<br>
+                            Equation: 5x × 4 = 100 → 20x = 100 → x = 5<br>
+                            So the rocket's speed is 25 km/h
+                        </div>
+                    `
+                },
+                "Puzzles": {
+                    title: "Math Puzzles",
+                    content: `
+                        <p>Math puzzles are fun problems that make you think logically!</p>
+                        <h4>Types of Math Puzzles:</h4>
+                        <ul>
+                            <li><strong>Number Puzzles:</strong> Finding patterns in numbers</li>
+                            <li><strong>Logic Puzzles:</strong> Using reasoning to solve problems</li>
+                            <li><strong>Geometry Puzzles:</strong> Puzzles with shapes and spaces</li>
+                            <li><strong>Word Problems:</strong> Math problems written as stories</li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Puzzle:</strong><br>
+                            An astronaut needs to cross a crater with a rover. The rover can carry 1 astronaut at a time and travels at 10 km/h. The crater is 30 km wide. How long will it take to cross?<br>
+                            <em>Answer: 3 hours (30 km ÷ 10 km/h = 3 hours)</em>
+                        </div>
+                    `
+                },
+                "Geometry": {
+                    title: "Geometry",
+                    content: `
+                        <p>Geometry is the study of shapes, sizes, and properties of space.</p>
+                        <h4>Basic Shapes:</h4>
+                        <ul>
+                            <li><strong>2D Shapes:</strong> Flat shapes with length and width
+                                <ul>
+                                    <li>Circle - round shape with no corners</li>
+                                    <li>Triangle - 3 sides and 3 angles</li>
+                                    <li>Square - 4 equal sides and 4 right angles</li>
+                                    <li>Rectangle - 4 sides with opposite sides equal</li>
+                                </ul>
+                            </li>
+                            <li><strong>3D Shapes:</strong> Solid shapes with length, width, and height
+                                <ul>
+                                    <li>Cube - like a dice</li>
+                                    <li>Sphere - like a planet</li>
+                                    <li>Cylinder - like a rocket</li>
+                                    <li>Cone - like a rocket nose</li>
+                                </ul>
+                            </li>
+                        </ul>
+                        <div class="example-box">
+                            <strong>Space Example:</strong> Planets are spheres, and their orbits around the sun are elliptical (oval-shaped).
+                        </div>
+                    `
+                }
+            },
+            science: {
+                "states and matter": {
+                    title: "states and matter",
+                    content: `
+                        <p>Matter is anything that has mass and occupies space. Everything around us is made of matter.</p>
+
+        <h4>States of Matter:</h4>
+        <ul>
+            <li><strong>Solid:</strong> Has fixed shape and volume</li>
+            <li><strong>Liquid:</strong> Has fixed volume but no fixed shape</li>
+            <li><strong>Gas:</strong> Has no fixed shape or volume</li>
+        </ul>
+
+        <h4>Properties of Matter:</h4>
+        <ul>
+            <li>Mass</li>
+            <li>Volume</li>
+            <li>Density</li>
+            <li>Shape & Size</li>
+            <li>Texture & Colour</li>
+        </ul>
+
+        <h4>Changes in State:</h4>
+        <ul>
+            <li><strong>Melting:</strong> Solid → Liquid</li>
+            <li><strong>Freezing:</strong> Liquid → Solid</li>
+            <li><strong>Evaporation:</strong> Liquid → Gas</li>
+            <li><strong>Condensation:</strong> Gas → Liquid</li>
+            <li><strong>Sublimation:</strong> Solid → Gas</li>
+        </ul>
+
+        <h4>Atoms & Molecules:</h4>
+        <ul>
+            <li><strong>Atoms:</strong> Smallest unit of matter</li>
+            <li><strong>Molecules:</strong> Combination of two or more atoms</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> A single drop of water contains billions of molecules!
+        </div>
+                    `
+                },
+                "Topic2_ForceMotion": {
+    title: "2. Force, Motion & Simple Machines",
+    content: `
+        <p>Force is a push or pull that can change an object’s motion, direction, or shape.</p>
+
+        <h4>Types of Forces:</h4>
+        <ul>
+            <li>Gravity</li>
+            <li>Friction</li>
+            <li>Magnetic Force</li>
+            <li>Muscular Force</li>
+        </ul>
+
+        <h4>Motion:</h4>
+        <ul>
+            <li>Linear Motion</li>
+            <li>Circular Motion</li>
+            <li>Oscillatory Motion</li>
+            <li><strong>Speed = Distance ÷ Time</strong></li>
+        </ul>
+
+        <h4>Simple Machines:</h4>
+        <ul>
+            <li>Lever</li>
+            <li>Pulley</li>
+            <li>Inclined Plane</li>
+            <li>Wheel and Axle</li>
+            <li>Screw</li>
+            <li>Wedge</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> Using a pulley can reduce the effort needed by almost half!
+        </div>
+    `
+},
+
+"Topic3_Energy": {
+    title: "3. Forms of Energy",
+    content: `
+        <p>Energy is the ability to do work. Everything around us uses or stores energy.</p>
+
+        <h4>Major Forms of Energy:</h4>
+        <ul>
+            <li>Kinetic Energy (movement)</li>
+            <li>Potential Energy (stored)</li>
+            <li>Heat Energy</li>
+            <li>Light Energy</li>
+            <li>Sound Energy</li>
+            <li>Electrical Energy</li>
+            <li>Chemical Energy</li>
+        </ul>
+
+        <h4>Energy Conversions:</h4>
+        <ul>
+            <li>Bulb: electrical → light</li>
+            <li>Car engine: chemical → mechanical</li>
+            <li>Solar panels: light → electrical</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> The Sun provides more energy in one hour than the world uses in one year!
+        </div>
+    `
+},
+
+"Topic4_LifeProcesses": {
+    title: "4. Living Organisms & Life Processes",
+    content: `
+        <p>Living organisms carry out processes to survive, grow, and reproduce.</p>
+
+        <h4>Characteristics of Living Things:</h4>
+        <ul>
+            <li>Movement</li>
+            <li>Growth</li>
+            <li>Respiration</li>
+            <li>Nutrition</li>
+            <li>Excretion</li>
+            <li>Reproduction</li>
+            <li>Sensitivity</li>
+        </ul>
+
+        <h4>Basic Life Processes:</h4>
+        <ul>
+            <li>Nutrition</li>
+            <li>Respiration</li>
+            <li>Transport</li>
+            <li>Excretion</li>
+            <li>Reproduction</li>
+        </ul>
+
+        <h4>Types of Organisms:</h4>
+        <ul>
+            <li>Plants</li>
+            <li>Animals</li>
+            <li>Microorganisms</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> Some microorganisms can reproduce in minutes!
+        </div>
+    `
+},
+
+"Topic5_HumanBody": {
+    title: "5. Human Body Systems",
+    content: `
+        <p>The human body is made of complex systems that work together to keep us alive.</p>
+
+        <h4>Major Body Systems:</h4>
+        <ul>
+            <li>Digestive System</li>
+            <li>Respiratory System</li>
+            <li>Circulatory System</li>
+            <li>Nervous System</li>
+            <li>Skeletal System</li>
+            <li>Muscular System</li>
+            <li>Excretory System</li>
+            <li>Reproductive System</li>
+        </ul>
+
+        <h4>Examples:</h4>
+        <ul>
+            <li>The heart pumps blood through the circulatory system.</li>
+            <li>Lungs help in gaseous exchange.</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> Your heart beats about 100,000 times every day!
+        </div>
+    `
+},
+
+"Topic6_EarthClimate": {
+    title: "6. Earth, Weather & Climate",
+    content: `
+        <p>Earth is constantly changing due to natural forces and atmospheric conditions.</p>
+
+        <h4>Layers of Earth:</h4>
+        <ul>
+            <li>Crust</li>
+            <li>Mantle</li>
+            <li>Outer Core</li>
+            <li>Inner Core</li>
+        </ul>
+
+        <h4>Weather:</h4>
+        <ul>
+            <li>Short-term atmospheric conditions</li>
+            <li>Includes rainfall, wind, and temperature</li>
+        </ul>
+
+        <h4>Climate:</h4>
+        <ul>
+            <li>Long-term weather pattern of a region</li>
+            <li>Tropical, Temperate, Polar</li>
+        </ul>
+
+        <h4>Natural Phenomena:</h4>
+        <ul>
+            <li>Earthquakes</li>
+            <li>Volcanoes</li>
+            <li>Floods</li>
+            <li>Cyclones</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> The Sahara Desert gets almost no rain for years!
+        </div>
+    `
+},
+
+"Topic7_SolarSystem": {
+    title: "7. The Solar System & Space",
+    content: `
+        <p>The Solar System includes the Sun, planets, moons, and many other celestial bodies.</p>
+
+        <h4>Planets in Order:</h4>
+        <ul>
+            <li>Mercury</li>
+            <li>Venus</li>
+            <li>Earth</li>
+            <li>Mars</li>
+            <li>Jupiter</li>
+            <li>Saturn</li>
+            <li>Uranus</li>
+            <li>Neptune</li>
+        </ul>
+
+        <h4>Other Objects:</h4>
+        <ul>
+            <li>Asteroids</li>
+            <li>Comets</li>
+            <li>Meteoroids</li>
+            <li>Dwarf Planets (Pluto)</li>
+        </ul>
+
+        <h4>Earth’s Movements:</h4>
+        <ul>
+            <li>Rotation → Day & Night</li>
+            <li>Revolution → Seasons</li>
+        </ul>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> Jupiter is so big that 1,300 Earths could fit inside it!
+        </div>
+    `
+},
+
+"Topic8_Environment": {
+    title: "8. Environment & Sustainability",
+    content: `
+        <p>The environment includes all living and non-living things around us.</p>
+
+        <h4>Environmental Problems:</h4>
+        <ul>
+            <li>Pollution</li>
+            <li>Deforestation</li>
+            <li>Climate Change</li>
+            <li>Global Warming</li>
+        </ul>
+
+        <h4>Sustainability Practices:</h4>
+        <ul>
+            <li>Reduce, Reuse, Recycle</li>
+            <li>Planting trees</li>
+            <li>Saving water</li>
+            <li>Using renewable energy</li>
+        </ul>
+
+        <h4>Why It Matters:</h4>
+        <p>Protecting the environment helps future generations live safely and healthily.</p>
+
+        <div class="example-box">
+            <strong>Fun Fact:</strong> Recycling one plastic bottle saves enough energy to power a bulb for 3 hours!
+        </div>
+    `
+},
+               
+            }
+        };
+
+        // Chat state
+        let chatState = {
+            currentStep: 'subject',
+            selectedSubject: null,
+            selectedTopic: null
+        };
+
+        // DOM elements
+        const chatContainer = document.getElementById('chatContainer');
+        const restartBtn = document.getElementById('restartBtn');
+
+        // Initialize chat
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            initChat();
+        });
+
+        function initChat() {
+            addBotMessage("Greetings, young space explorer! I'm Cosmo, your intergalactic learning assistant. What subject would you like to explore today?");
+            showSubjectOptions();
+        }
+
+        function addBotMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message bot-message';
+            messageDiv.innerHTML = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function addUserMessage(text) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message user-message';
+            messageDiv.textContent = text;
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showSubjectOptions() {
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-container';
+            
+            const mathsBtn = document.createElement('button');
+            mathsBtn.className = 'option-btn';
+            mathsBtn.textContent = '🚀 Maths';
+            mathsBtn.onclick = () => selectSubject('maths');
+            
+            const scienceBtn = document.createElement('button');
+            scienceBtn.className = 'option-btn';
+            scienceBtn.textContent = '🪐 Science';
+            scienceBtn.onclick = () => selectSubject('science');
+            
+            optionsDiv.appendChild(mathsBtn);
+            optionsDiv.appendChild(scienceBtn);
+            
+            chatContainer.appendChild(optionsDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function selectSubject(subject) {
+            chatState.selectedSubject = subject;
+            chatState.currentStep = 'topic';
+            
+            addUserMessage(subject.charAt(0).toUpperCase() + subject.slice(1));
+            
+            addBotMessage(`Excellent choice! You've selected ${subject}. Which cosmic topic would you like to explore?`);
+            showTopicOptions(subject);
+        }
+
+        function showTopicOptions(subject) {
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-container';
+            
+            const topics = Object.keys(topicContent[subject]);
+            
+            topics.forEach(topic => {
+                const topicBtn = document.createElement('button');
+                topicBtn.className = 'option-btn';
+                topicBtn.textContent = topic;
+                topicBtn.onclick = () => selectTopic(topic);
+                optionsDiv.appendChild(topicBtn);
+            });
+            
+            chatContainer.appendChild(optionsDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function selectTopic(topic) {
+            chatState.selectedTopic = topic;
+            chatState.currentStep = 'content';
+            
+            addUserMessage(topic);
+            
+            addBotMessage(`Preparing your cosmic knowledge about ${topic}...`);
+            showTopicContent(chatState.selectedSubject, topic);
+            
+            // Ask if they want to continue
+            setTimeout(() => {
+                addBotMessage("Would you like to explore another topic in our galaxy of knowledge?");
+                showContinueOptions();
+            }, 500);
+        }
+
+        function showTopicContent(subject, topic) {
+            const contentDiv = document.createElement('div');
+            contentDiv.className = 'content-area';
+            contentDiv.innerHTML = topicContent[subject][topic].content;
+            chatContainer.appendChild(contentDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function showContinueOptions() {
+            const optionsDiv = document.createElement('div');
+            optionsDiv.className = 'options-container';
+            
+            const yesBtn = document.createElement('button');
+            yesBtn.className = 'option-btn';
+            yesBtn.textContent = 'Yes, another topic';
+            yesBtn.onclick = () => {
+                addUserMessage('Yes, another topic');
+                chatState.currentStep = 'topic';
+                addBotMessage(`Which topic would you like to explore next?`);
+                showTopicOptions(chatState.selectedSubject);
+            };
+            
+            const noBtn = document.createElement('button');
+            noBtn.className = 'option-btn';
+            noBtn.textContent = 'No, different subject';
+            noBtn.onclick = () => {
+                addUserMessage('No, different subject');
+                resetChat();
+            };
+            
+            optionsDiv.appendChild(yesBtn);
+            optionsDiv.appendChild(noBtn);
+            
+            chatContainer.appendChild(optionsDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+
+        function resetChat() {
+            chatState = {
+                currentStep: 'subject',
+                selectedSubject: null,
+                selectedTopic: null
+            };
+            
+            addBotMessage("Ready for a new learning mission! What subject would you like to explore now?");
+            showSubjectOptions();
+        }
+
+        // Restart button functionality
+        restartBtn.addEventListener('click', () => {
+            chatContainer.innerHTML = '';
+            resetChat();
+        });
+    </script>
+</body>
+</html>

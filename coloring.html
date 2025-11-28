@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cosmos Explorer | Coloring for Kids</title>
+    <style>
+        :root {
+            --primary: #4facfe;
+            --secondary: #00f2fe;
+            --accent: #f441a5;
+        }
+        
+        /* Loading screen styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 13, 27, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+            transition: opacity 0.8s ease-out;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .cosmic-loader {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        
+        .cosmic-loader:before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: var(--primary);
+            border-bottom-color: var(--secondary);
+            animation: cosmicSpin 1.5s linear infinite;
+        }
+        
+        .cosmic-loader:after {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            right: 10px;
+            bottom: 10px;
+            border-radius: 50%;
+            border: 5px solid transparent;
+            border-top-color: var(--accent);
+            border-bottom-color: #ff6b6b;
+            animation: cosmicSpin 1s linear infinite reverse;
+        }
+        
+        @keyframes cosmicSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading-text {
+            font-size: 1.2rem;
+            margin-top: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: textPulse 2s infinite;
+            font-family: 'Kristen ITC', Arial, sans-serif;
+            text-shadow: 0 0 8px rgba(79, 172, 254, 0.5);
+        }
+        
+        @keyframes textPulse {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        
+        /* Stars.css content integrated */
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-x: hidden;
+            font-family: 'Kristen ITC', Arial, sans-serif;
+        }
+        
+        .night-sky {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at bottom, #1a1a40 0%, #000010 100%);
+            z-index: -2;
+            overflow: hidden;
+        }
+        
+        /* Star animation */
+        @keyframes twinkle {
+            0% { opacity: 0.2; }
+            50% { opacity: 1; }
+            100% { opacity: 0.2; }
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+            animation-delay: calc(var(--delay) * 1s);
+        }
+        
+        /* Animated Nebula Effect */
+        .nebula {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(106, 0, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(0, 247, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 40% 60%, rgba(255, 0, 200, 0.1) 0%, transparent 50%);
+            z-index: -1;
+            animation: nebulaPulse 20s infinite alternate;
+        }
+        
+        @keyframes nebulaPulse {
+            0% { opacity: 0.7; filter: blur(0px); }
+            50% { opacity: 1; filter: blur(2px); }
+            100% { opacity: 0.7; filter: blur(0px); }
+        }
+        
+        /* Shooting Stars */
+        .shooting-star {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: linear-gradient(90deg, rgba(255,255,255,0), #fff);
+            border-radius: 50%;
+            filter: drop-shadow(0 0 6px #00f2fe);
+            animation: shoot var(--speed) linear infinite;
+            opacity: 0;
+            transform: rotate(45deg);
+            z-index: -1;
+        }
+        
+        .shooting-star::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100px;
+            height: 1px;
+            background: linear-gradient(90deg, #00f2fe, rgba(0, 247, 255, 0));
+        }
+        
+        @keyframes shoot {
+            0% { 
+                opacity: 1;
+                top: var(--top);
+                left: var(--left);
+            }
+            100% { 
+                opacity: 0;
+                top: calc(var(--top) + 300px);
+                left: calc(var(--left) + 300px);
+            }
+        }
+
+        /* Fixed Back Button */
+        .back-button {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            padding: 8px 15px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, #6a00ff, #ff00c8);
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(106, 0, 255, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(106, 0, 255, 0.6);
+        }
+        
+        .back-button i {
+            font-size: 1rem;
+        }
+
+        /* Main content styling */
+        .main-content {
+            min-height: 100vh;
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+        }
+        
+        /* Coloring page specific styles */
+        .coloring-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #fff;
+            text-align: center;
+            text-shadow: 0 0 10px #03a9f4;
+            margin-bottom: 20px;
+            margin-top: 40px;
+        }
+        
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            background: rgba(20, 20, 50, 0.7);
+            padding: 20px;
+            border-radius: 15px;
+            backdrop-filter: blur(5px);
+            width: 80%;
+            max-width: 800px;
+        }
+        
+        .image-selector {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            width: 100%;
+        }
+        
+        .thumbnail {
+            width: 80px;
+            height: 60px;
+            object-fit: cover;
+            border: 2px solid transparent;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .thumbnail:hover {
+            transform: scale(1.1);
+            border-color: #4facfe;
+        }
+        
+        .thumbnail.active {
+            border-color: #ffeb3b;
+            box-shadow: 0 0 10px #ffeb3b;
+        }
+        
+        button, input[type="color"], input[type="file"] {
+            background: rgba(79, 172, 254, 0.2);
+            border: 1px solid #4facfe;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: 'Kristen ITC', Arial, sans-serif;
+        }
+        
+        button:hover, input[type="color"]:hover, input[type="file"]:hover {
+            background: rgba(79, 172, 254, 0.4);
+            transform: translateY(-2px);
+        }
+        
+        label {
+            color: white;
+            margin-right: 5px;
+            font-family: 'Kristen ITC', Arial, sans-serif;
+        }
+        
+        canvas {
+            border: 2px solid #4facfe;
+            border-radius: 10px;
+            margin-top: 20px;
+            cursor: crosshair;
+            background-color: white;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.5);
+            max-width: 100%;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .controls {
+                width: 95%;
+                padding: 15px;
+            }
+            
+            canvas {
+                width: 95%;
+                height: auto;
+            }
+            
+            .thumbnail {
+                width: 60px;
+                height: 45px;
+            }
+            
+            .back-button {
+                padding: 6px 12px;
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-content">
+            <div class="cosmic-loader"></div>
+            <div class="loading-text">Launching Cosmic Colors...</div>
+        </div>
+    </div>
+    <div class="night-sky" id="night-sky"></div>
+    <div class="nebula"></div>
+    
+    <!-- Fixed back button -->
+    <a href="games.html" class="back-button">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
+    <div class="main-content">
+        <div class="coloring-container">
+            <h1>🎨 Space Coloring for Kids</h1>
+            
+            <div class="controls">
+                <div class="image-selector" id="imageSelector">
+                    <!-- Thumbnails will be added here by JavaScript -->
+                </div>
+                
+                <div>
+                    <label>Color Picker: </label>
+                    <input type="color" id="colorPicker" value="#ff0000">
+                </div>
+                
+                <button onclick="clearCanvas()">Clear Canvas</button>
+                <button onclick="saveDrawing()">Save Drawing</button>
+                
+                <div>
+                    <label>Upload Your Own: </label>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+            </div>
+            
+            <canvas id="canvas" width="600" height="400"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // Array of default coloring images with thumbnails
+        const coloringImages = [
+            {
+                name: "cosmos",
+                image: "https://th.bing.com/th/id/OIP.wzrTCwicbI7qZy-B0IB_OgHaKe?w=202&h=286&c=7&r=0&o=5&dpr=1.5&pid=1.7",
+                thumbnail: "https://th.bing.com/th/id/OIP.wzrTCwicbI7qZy-B0IB_OgHaKe?w=202&h=286&c=7&r=0&o=5&dpr=1.5&pid=1.7"
+            },
+            {
+                name: "Rocket",
+                image: "https://static.vecteezy.com/system/resources/previews/005/234/634/non_2x/rocket-coloring-page-for-kids-free-vector.jpg",
+                thumbnail: "https://static.vecteezy.com/system/resources/previews/005/234/634/non_2x/rocket-coloring-page-for-kids-free-vector.jpg"
+            },
+            {
+                name: "Space Ship",
+                image: "https://static.vecteezy.com/system/resources/previews/010/993/614/large_2x/ufo-spaceship-coloring-page-for-kids-free-vector.jpg",
+                thumbnail: "https://static.vecteezy.com/system/resources/previews/010/993/614/large_2x/ufo-spaceship-coloring-page-for-kids-free-vector.jpg"
+            },
+            {
+                name: "Alien",
+                image: "https://th.bing.com/th/id/OIP.MqRpjrzg4VAaC-mUdcCzgAHaHa?w=952&h=952&rs=1&pid=ImgDetMain",
+                thumbnail: "https://th.bing.com/th/id/OIP.MqRpjrzg4VAaC-mUdcCzgAHaHa?w=952&h=952&rs=1&pid=ImgDetMain"
+            },
+            {
+                name: "Astronaut",
+                image: "https://dressesanddinosaurs.com/wp-content/uploads/2022/09/Astronaut-Coloring-Pages.jpg",
+                thumbnail: "https://dressesanddinosaurs.com/wp-content/uploads/2022/09/Astronaut-Coloring-Pages.jpg"
+            }
+        ];
+
+        const canvas = document.getElementById("canvas");
+        const ctx = canvas.getContext("2d");
+        const fileInput = document.getElementById("fileInput");
+        const colorPicker = document.getElementById("colorPicker");
+        const imageSelector = document.getElementById("imageSelector");
+        const loadingScreen = document.getElementById("loading-screen");
+
+        let img = new Image();
+        let currentImageIndex = 0;
+        let initialized = false; // Flag to prevent double initialization
+        
+        // Optimized loading handler
+        document.addEventListener('DOMContentLoaded', function() {
+            // First hide the loading screen quickly
+            loadingScreen.style.opacity = '0';
+            
+            // Then remove it after fade completes
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+                
+                // Initialize the app only if not already initialized
+                if (!initialized) {
+                    initApp();
+                    initialized = true;
+                }
+            }, 500); // Half second fade time
+        });
+
+        function initApp() {
+            initImageSelector();
+            loadImage(coloringImages[0].image);
+            createStars();
+            createShootingStars();
+        }
+
+        // Initialize the image selector
+        function initImageSelector() {
+            // Clear any existing thumbnails first
+            imageSelector.innerHTML = '';
+            
+            coloringImages.forEach((image, index) => {
+                const thumb = document.createElement("img");
+                thumb.src = image.thumbnail;
+                thumb.alt = image.name;
+                thumb.title = image.name;
+                thumb.className = "thumbnail";
+                if (index === currentImageIndex) {
+                    thumb.classList.add("active");
+                }
+                
+                thumb.addEventListener("click", () => {
+                    // Remove active class from all thumbnails
+                    document.querySelectorAll(".thumbnail").forEach(t => t.classList.remove("active"));
+                    // Add active class to clicked thumbnail
+                    thumb.classList.add("active");
+                    
+                    // Load the selected image
+                    currentImageIndex = index;
+                    loadImage(coloringImages[index].image);
+                });
+                
+                imageSelector.appendChild(thumb);
+            });
+        }
+
+        // Load an image onto the canvas
+        function loadImage(src) {
+            img = new Image();
+            img.crossOrigin = "Anonymous"; // For CORS if needed
+            img.onload = function() {
+                // Clear canvas and draw the new image
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                // Calculate aspect ratio to maintain proportions
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.min(hRatio, vRatio);
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                ctx.drawImage(img, 0, 0, img.width, img.height, 
+                             centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+            };
+            img.onerror = function() {
+                alert("Error loading image. Please try another one.");
+                // Fallback to first image if error occurs
+                if (currentImageIndex !== 0) {
+                    currentImageIndex = 0;
+                    document.querySelectorAll(".thumbnail")[0].click();
+                }
+            };
+            img.src = src;
+        }
+
+        // Load image when user selects one
+        fileInput.addEventListener("change", function() {
+            const file = fileInput.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                // Remove active class from all thumbnails
+                document.querySelectorAll(".thumbnail").forEach(t => t.classList.remove("active"));
+                loadImage(event.target.result);
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Handle bucket fill on click
+        canvas.addEventListener("click", function(e) {
+            const rect = canvas.getBoundingClientRect();
+            const x = Math.floor(e.clientX - rect.left);
+            const y = Math.floor(e.clientY - rect.top);
+
+            const fillColor = hexToRgba(colorPicker.value);
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            const targetColor = getColorAt(imageData, x, y);
+
+            if (!colorsMatch(targetColor, fillColor)) {
+                floodFill(imageData, x, y, targetColor, fillColor);
+                ctx.putImageData(imageData, 0, 0);
+            }
+        });
+
+        // Flood Fill Algorithm
+        function floodFill(imageData, x, y, targetColor, fillColor) {
+            const {width, height, data} = imageData;
+            const stack = [[x, y]];
+            const visited = new Uint8Array(width * height);
+
+            while (stack.length) {
+                const [cx, cy] = stack.pop();
+                const index = cy * width + cx;
+                if (cx < 0 || cy < 0 || cx >= width || cy >= height || visited[index]) continue;
+
+                const currentColor = getColorAt(imageData, cx, cy);
+                if (!colorsMatch(currentColor, targetColor)) continue;
+
+                setColorAt(imageData, cx, cy, fillColor);
+                visited[index] = 1;
+
+                stack.push([cx + 1, cy]);
+                stack.push([cx - 1, cy]);
+                stack.push([cx, cy + 1]);
+                stack.push([cx, cy - 1]);
+            }
+        }
+
+        // Get color of pixel at (x, y)
+        function getColorAt(imageData, x, y) {
+            const i = (y * imageData.width + x) * 4;
+            return [
+                imageData.data[i],
+                imageData.data[i + 1],
+                imageData.data[i + 2],
+                imageData.data[i + 3],
+            ];
+        }
+
+        // Set color of pixel at (x, y)
+        function setColorAt(imageData, x, y, [r, g, b, a]) {
+            const i = (y * imageData.width + x) * 4;
+            imageData.data[i] = r;
+            imageData.data[i + 1] = g;
+            imageData.data[i + 2] = b;
+            imageData.data[i + 3] = a;
+        }
+
+        // Compare two colors (ignore slight variations for anti-aliasing)
+        function colorsMatch(a, b) {
+            return Math.abs(a[0] - b[0]) < 30 &&  
+                   Math.abs(a[1] - b[1]) < 30 &&
+                   Math.abs(a[2] - b[2]) < 30 &&
+                   Math.abs(a[3] - b[3]) < 30;
+        }
+
+        // Convert HEX color to RGBA
+        function hexToRgba(hex) {
+            const bigint = parseInt(hex.slice(1), 16);
+            const r = (bigint >> 16) & 255;
+            const g = (bigint >> 8) & 255;
+            const b = bigint & 255;
+            return [r, g, b, 255];
+        }
+
+        // Clear Canvas Button
+        function clearCanvas() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            if (img.src) {
+                // Redraw the image maintaining aspect ratio
+                const hRatio = canvas.width / img.width;
+                const vRatio = canvas.height / img.height;
+                const ratio = Math.min(hRatio, vRatio);
+                const centerShift_x = (canvas.width - img.width * ratio) / 2;
+                const centerShift_y = (canvas.height - img.height * ratio) / 2;
+                ctx.drawImage(img, 0, 0, img.width, img.height, 
+                             centerShift_x, centerShift_y, img.width * ratio, img.height * ratio);
+            }
+        }
+
+        // Save Drawing Button
+        function saveDrawing() {
+            const link = document.createElement('a');
+            link.download = 'space-coloring-' + new Date().toISOString().slice(0,10) + '.png';
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+        }
+
+        // Create stars for background
+        function createStars() {
+            const nightSky = document.getElementById('night-sky');
+            const starCount = 200;
+            
+            // Clear existing stars first
+            const existingStars = nightSky.querySelectorAll('.star');
+            existingStars.forEach(star => star.remove());
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                
+                const size = Math.random() * 2 + 1;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.left = `${Math.random() * 100}%`;
+                star.style.top = `${Math.random() * 100}%`;
+                star.style.setProperty('--delay', Math.random() * 5);
+                
+                nightSky.appendChild(star);
+            }
+        }
+
+        // Create shooting stars
+        function createShootingStars() {
+            const nightSky = document.getElementById('night-sky');
+            
+            // Clear existing shooting stars first
+            const existingShootingStars = nightSky.querySelectorAll('.shooting-star');
+            existingShootingStars.forEach(star => star.remove());
+            
+            function createShootingStar() {
+                const shootingStar = document.createElement('div');
+                shootingStar.className = 'shooting-star';
+                
+                const top = Math.random() * 20;
+                const left = Math.random() * 20;
+                shootingStar.style.setProperty('--top', `${top}%`);
+                shootingStar.style.setProperty('--left', `${left}%`);
+                shootingStar.style.setProperty('--speed', `${Math.random() * 3 + 2}s`);
+                
+                nightSky.appendChild(shootingStar);
+                
+                setTimeout(() => {
+                    shootingStar.remove();
+                }, 3000);
+            }
+            
+            // Create initial shooting stars
+            for (let i = 0; i < 3; i++) {
+                setTimeout(createShootingStar, i * 800);
+            }
+            
+            // Continue creating shooting stars periodically
+            setInterval(createShootingStar, 2000);
+        }
+    </script>
+</body>
+</html>
