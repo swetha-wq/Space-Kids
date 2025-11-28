@@ -1,0 +1,1620 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Space Science Mission</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      padding: 0;
+      margin: 0;
+      font-family: "Poppins", system-ui, sans-serif;
+    }
+    .back-button {
+            position: absolute;
+            top: 8vh;
+            left: 2vh;
+            padding: 10px 20px;
+            border-radius: 30px;
+            background: linear-gradient(45deg, var(--primary), var(--accent));
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(120, 99, 150, 0.4);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(141, 84, 221, 0.6);
+        }
+        
+        .back-button i {
+            font-size: 1rem;
+        }
+
+    body {
+      background: radial-gradient(circle at top, #1b1f4b, #050616);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Space Background (subtle) */
+    .space-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(255, 119, 198, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 80%, rgba(120, 219, 255, 0.2) 0%, transparent 50%),
+        radial-gradient(ellipse at bottom, #1b1f4b 0%, #050616 70%);
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(2px 2px at 20px 30px, #eee, transparent),
+        radial-gradient(2px 2px at 40px 70px, #fff, transparent),
+        radial-gradient(1px 1px at 90px 40px, #fff, transparent),
+        radial-gradient(1px 1px at 130px 80px, #fff, transparent),
+        radial-gradient(2px 2px at 160px 30px, #eee, transparent),
+        radial-gradient(1px 1px at 210px 60px, #fff, transparent),
+        radial-gradient(2px 2px at 250px 90px, #eee, transparent),
+        radial-gradient(1px 1px at 290px 20px, #fff, transparent);
+      background-repeat: repeat;
+      background-size: 550px 550px;
+      animation: twinkle 8s ease-in-out infinite alternate;
+      z-index: -1;
+    }
+
+    @keyframes twinkle {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; }
+    }
+
+    /* Floating astronauts / UFO / satellite OUTSIDE card */
+    .floating-astro,
+    .floating-ufo,
+    .floating-satellite {
+      position: absolute;
+      font-size: 30px;
+      opacity: 0.9;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .floating-astro {
+      top: 15%;
+      left: 10%;
+      animation: float-up 4s ease-in-out infinite alternate;
+    }
+
+    .floating-ufo {
+      top: 12%;
+      right: 12%;
+      animation: float-side 5s ease-in-out infinite alternate;
+    }
+
+    .floating-satellite {
+      bottom: 10%;
+      right: 20%;
+      animation: float-diag 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes float-up {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-10px); }
+    }
+
+    @keyframes float-side {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(15px); }
+    }
+
+    @keyframes float-diag {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(-12px, -8px); }
+    }
+
+    .page-wrapper {
+      width: 100%;
+      max-width: 1100px;
+      aspect-ratio: 16 / 9;
+      background: linear-gradient(#2a124e, #1b0f2f);
+      border-radius: 24px;
+      padding: 16px 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .page-header h1 {
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+
+    .page-header span {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    /* Map area */
+    .space-map {
+      position: relative;
+      width: 100%;
+      height: calc(100% - 52px);
+      border-radius: 20px;
+      padding: 16px;
+      overflow: hidden;
+      background: radial-gradient(
+        circle at top,
+        #43308a 0%,
+        #1a0f3e 45%,
+        #070418 100%
+      );
+    }
+
+    /* Rocket */
+    .rocket {
+      position: absolute;
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 36px;
+      z-index: 2;
+      transform: translate(-50%, -50%);
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+      transition: transform 0.2s ease;
+      filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.6));
+    }
+
+    /* Topic nodes (PLANETS) */
+    .topic-node {
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      border: 3px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 1;
+      filter: drop-shadow(0 0 10px currentColor);
+    }
+
+    .topic-node:nth-child(2) { 
+      background: radial-gradient(circle at 30% 20%, #ff9e9e, #ff5252);
+      filter: drop-shadow(0 0 15px rgba(255, 82, 82, 0.7));
+    }
+    .topic-node:nth-child(3) { 
+      background: radial-gradient(circle at 30% 20%, #ffd699, #ff9800);
+      filter: drop-shadow(0 0 15px rgba(255, 152, 0, 0.7));
+    }
+    .topic-node:nth-child(4) { 
+      background: radial-gradient(circle at 30% 20%, #c8e6c9, #4caf50);
+      filter: drop-shadow(0 0 15px rgba(76, 175, 80, 0.7));
+    }
+    .topic-node:nth-child(5) { 
+      background: radial-gradient(circle at 30% 20%, #b3e5fc, #03a9f4);
+      filter: drop-shadow(0 0 15px rgba(3, 169, 244, 0.7));
+    }
+    .topic-node:nth-child(6) { 
+      background: radial-gradient(circle at 30% 20%, #e1bee7, #9c27b0);
+      filter: drop-shadow(0 0 15px rgba(156, 39, 176, 0.7));
+    }
+    .topic-node:nth-child(7) { 
+      background: radial-gradient(circle at 30% 20%, #ffcc80, #ff5722);
+      filter: drop-shadow(0 0 15px rgba(255, 87, 34, 0.7));
+    }
+    .topic-node:nth-child(8) { 
+      background: radial-gradient(circle at 30% 20%, #f8bbd0, #e91e63);
+      filter: drop-shadow(0 0 15px rgba(233, 30, 99, 0.7));
+    }
+    .topic-node:nth-child(9) { 
+      background: radial-gradient(circle at 30% 20%, #d7ccc8, #795548);
+      filter: drop-shadow(0 0 15px rgba(121, 85, 72, 0.7));
+    }
+    /* Special styling for All Topics planet - BIGGER and MORE GLOW */
+    .topic-node:nth-child(10) { 
+      background: radial-gradient(circle at 30% 20%, #ffe8ff, #8a63ff);
+      width: 110px;
+      height: 110px;
+      border: 4px solid rgba(255, 255, 255, 0.6);
+      filter: drop-shadow(0 0 25px rgba(138, 99, 255, 0.9));
+      animation: pulse-glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+      0% { 
+        filter: drop-shadow(0 0 20px rgba(138, 99, 255, 0.7));
+        transform: scale(1);
+      }
+      100% { 
+        filter: drop-shadow(0 0 30px rgba(138, 99, 255, 1));
+        transform: scale(1.05);
+      }
+    }
+
+    .topic-node span.number {
+      font-size: 20px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    .topic-node span.label {
+      font-size: 12px;
+      margin-top: 4px;
+      text-align: center;
+      padding: 0 4px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      font-weight: 600;
+    }
+
+    .topic-node:nth-child(10) span.number {
+      font-size: 24px;
+    }
+
+    .topic-node:nth-child(10) span.label {
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .topic-node:hover {
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.8);
+      filter: brightness(1.2) drop-shadow(0 0 20px currentColor);
+    }
+
+    .topic-node:nth-child(10):hover {
+      transform: translateY(-4px) scale(1.1);
+      filter: brightness(1.3) drop-shadow(0 0 35px rgba(138, 99, 255, 1));
+    }
+
+    /* Popup / Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 99;
+      backdrop-filter: blur(5px);
+    }
+
+    .modal {
+      width: min(600px, 90vw);
+      background: linear-gradient(135deg, #1b1230, #2a1a4a);
+      border-radius: 20px;
+      padding: 20px 22px 18px;
+      box-shadow:
+        0 20px 40px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      position: relative;
+      backdrop-filter: blur(10px);
+    }
+
+    .modal h2 {
+      font-size: 26px;
+      margin-bottom: 6px;
+      background: linear-gradient(90deg, #ffb84a, #ff64b8);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .modal p {
+      font-size: 16px;
+      line-height: 1.4;
+      margin-bottom: 10px;
+      opacity: 0.9;
+      white-space: pre-line;
+    }
+
+    .video-box {
+      background: #0b0716;
+      border-radius: 14px;
+      padding: 8px;
+      margin-bottom: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .video-box iframe {
+      width: 100%;
+      height: 220px;
+      border: none;
+      border-radius: 10px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .btn {
+      border: none;
+      padding: 8px 16px;
+      border-radius: 999px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, #ffb84a, #ff64b8);
+      color: #1b1230;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 184, 74, 0.4);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .close-x {
+      position: absolute;
+      top: 10px;
+      right: 14px;
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0.7;
+      background: rgba(255, 255, 255, 0.1);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-x:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Quiz Styles */
+    .quiz-container {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quiz-header h2 {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quiz-header h2::before {
+      content: "🧠";
+    }
+
+    .question-counter {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.12);
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #ffb84a, #ff64b8);
+      transition: width 0.3s ease;
+    }
+
+    .question-text {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .options-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .option-badge {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .option-text {
+      font-size: 15px;
+    }
+
+    .option:hover {
+      transform: translateY(-1px);
+      background: rgba(255, 255, 255, 0.12);
+      border-color: rgba(255, 255, 255, 0.5);
+    }
+
+    .option.selected {
+      background: rgba(255, 184, 74, 0.23);
+      border-color: #ffb84a;
+      box-shadow: 0 0 12px rgba(255, 184, 74, 0.5);
+    }
+
+    .quiz-navigation {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quiz-btn {
+      padding: 9px 20px;
+      border: none;
+      border-radius: 25px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .quiz-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .prev-btn {
+      background: transparent;
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    .next-btn, .submit-btn {
+      background: linear-gradient(90deg, #ffb84a, #ff64b8);
+      color: #1b1230;
+      font-weight: 600;
+    }
+
+    .next-btn:hover, .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 184, 74, 0.4);
+    }
+
+    .results-container {
+      display: none;
+      flex-direction: column;
+      gap: 15px;
+      text-align: center;
+    }
+
+    .score-display {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 10px 0;
+      color: #ffb84a;
+    }
+
+    .results-list {
+      text-align: left;
+      max-height: 260px;
+      overflow-y: auto;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.3);
+      border-radius: 10px;
+    }
+
+    .result-item {
+      margin-bottom: 12px;
+      padding: 8px;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .result-question {
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .correct-answer {
+      color: #4CAF50;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .user-answer {
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .user-answer.correct {
+      color: #4CAF50;
+    }
+
+    .user-answer.incorrect {
+      color: #f44336;
+    }
+
+    @media (max-width: 800px) {
+      .page-wrapper {
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .topic-node {
+        width: 70px;
+        height: 70px;
+      }
+      .topic-node:nth-child(10) {
+        width: 85px;
+        height: 85px;
+      }
+      .rocket {
+        width: 55px;
+        height: 55px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <a href="home.html" class="back-button">
+        <i class="fasfa-arrow-left"></i> Back
+    </a>
+  <!-- Space Background -->
+  <div class="space-background"></div>
+  <div class="stars"></div>
+
+  <!-- Floating characters OUTSIDE card -->
+  <div class="floating-astro">🧑‍🚀</div>
+  <div class="floating-ufo">🛸</div>
+  <div class="floating-satellite">🛰</div>
+
+  <div class="page-wrapper">
+    <div class="page-header">
+      <h1>🚀 Space Science Mission</h1>
+      <span>Click a planet to start your mission!</span>
+    </div>
+
+    <div class="space-map" id="spaceMap">
+      <!-- Rocket -->
+      <div class="rocket" id="rocket">🚀</div>
+
+      <!-- Topic planets (updated to 8 topics + All Topics) -->
+      <button class="topic-node" data-index="0" style="top: 72%; left: 12%">
+        <span class="number">1</span>
+        <span class="label">Matter</span>
+      </button>
+
+      <button class="topic-node" data-index="1" style="top: 58%; left: 28%">
+        <span class="number">2</span>
+        <span class="label">Force & Motion</span>
+      </button>
+
+      <button class="topic-node" data-index="2" style="top: 72%; left: 45%">
+        <span class="number">3</span>
+        <span class="label">Energy</span>
+      </button>
+
+      <button class="topic-node" data-index="3" style="top: 45%; left: 60%">
+        <span class="number">4</span>
+        <span class="label">Living Organisms</span>
+      </button>
+
+      <button class="topic-node" data-index="4" style="top: 30%; left: 46%">
+        <span class="number">5</span>
+        <span class="label">Human Body</span>
+      </button>
+
+      <button class="topic-node" data-index="5" style="top: 35%; left: 25%">
+        <span class="number">6</span>
+        <span class="label">Weather & Climate</span>
+      </button>
+
+      <button class="topic-node" data-index="6" style="top: 18%; left: 12%">
+        <span class="number">7</span>
+        <span class="label">Solar System</span>
+      </button>
+
+      <button class="topic-node" data-index="7" style="top: 18%; left: 70%">
+        <span class="number">8</span>
+        <span class="label">Environment</span>
+      </button>
+
+      <!-- All Topics Mega Quiz planet (bigger glow) -->
+      <button class="topic-node" data-index="8" style="top: 50%; left: 82%">
+        <span class="number">9</span>
+        <span class="label">All Topics</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- LEARNING / QUIZ INTRO MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <div class="close-x" id="closeModal">&times;</div>
+      <h2 id="modalTitle">Topic Title</h2>
+      <p id="modalDescription">
+        Topic description goes here.
+      </p>
+
+      <div class="video-box" id="videoBox">
+        <iframe
+          id="modalVideo"
+          src=""
+          allowfullscreen
+        ></iframe>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" id="closeButton">Close</button>
+        <button class="btn btn-primary" id="quizButton">Take Quiz</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUIZ MODAL -->
+  <div class="modal-overlay" id="quizModalOverlay">
+    <div class="modal">
+      <div class="close-x" id="closeQuizModal">&times;</div>
+
+      <!-- Quiz Container -->
+      <div class="quiz-container" id="quizContainer">
+        <div class="quiz-header">
+          <h2 id="quizTitle">Math Quiz</h2>
+          <div class="question-counter" id="questionCounter">Question 1 of 5</div>
+        </div>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+
+        <div class="question-text" id="questionText"></div>
+
+        <div class="options-container" id="optionsContainer"></div>
+
+        <div class="quiz-navigation">
+          <button class="quiz-btn prev-btn" id="prevBtn" disabled>Previous</button>
+          <button class="quiz-btn next-btn" id="nextBtn">Next</button>
+          <button class="quiz-btn submit-btn" id="submitBtn" style="display: none;">Submit Quiz</button>
+        </div>
+      </div>
+
+      <!-- Results Container -->
+      <div class="results-container" id="resultsContainer">
+        <h2>Quiz Results</h2>
+        <div class="score-display" id="scoreDisplay"></div>
+        <p id="resultsMessage"></p>
+
+        <div class="results-list" id="resultsList"></div>
+
+        <div class="modal-footer">
+          <button class="btn btn-secondary" id="retryButton">Try Again</button>
+          <button class="btn btn-primary" id="closeResultsButton">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ======= TOPIC DATA (8 topics + All Topics) =======
+    const topics = [
+      {
+        title: "Matter & Its Properties",
+        description:
+          "Welcome to Planet Matter! 🪐\n\nExplore how matter is structured at the microscopic level, introducing fundamental scientific concepts for learners.\nWatch the video to revise, then try the quiz to test your basics.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Force, Motion & Simple Machines",
+        description:
+          "Force and motion Galaxy unlocked! ✨\n\nExplains Newton’s three Laws of Motion with clear examples.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Forms of Energy",
+        description:
+          "Energy Nebula reached! \n\nHow energy constantly changes form through different types of transfers are waiting for you.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Living Organisms & Life Processes",
+        description:
+          "Living Organisms & Life Processes Station! \n\nWe are going to lear no Nutrition, Respiration, Transportaion, Excretion.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Human Body Systems",
+        description:
+          "Human Body Systems Planet! \n\nIntroduction to the 11 major human body systems, including the circulatory, digestive, nervous, and skeletal systems",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Earth, weather and climate",
+        description:
+          "Earth, weather and climate World! \n\nAn overview of the five layers of the Earth's atmosphere (troposphere, stratosphere, mesosphere, thermosphere, and exosphere).",
+        video: "geometry.mp4"
+      },
+      {
+        title: "The Solar System & Space",
+        description:
+          "The Solar System & Space \n\nThe formation of our solar system and the eight planets that revolve around the Sun.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "Environment & Sustainability",
+        description:
+          "Environment Planet! \n\nExplains the concepts of food chains and food webs in an ecosystem.",
+        video: "geometry.mp4"
+      },
+      {
+        title: "All Topics Mega Quiz",
+        description:
+          "Final Mission: All Topics! 🌌\n\nYou've travelled through every planet. Now take this big mixed quiz covering all 8 topics.",
+        video: null // no video for All Topics
+      }
+    ];
+
+    // ======= QUIZ DATA (new questions for each topic + All Topics) =======
+    const quizData = {
+    0: [ // Matter
+    {
+      question: "Which of the following is the smallest unit of matter?",
+      options: ["Molecule", "Atom", "Cell", "Compound"],
+      correct: 1
+    },
+    {
+      question: "Which state of matter has a fixed shape and fixed volume?",
+      options: ["Solid", "Liquid", "Gas", "Plasma"],
+      correct: 0
+    },
+    {
+      question: "What is formed when two or more atoms combine chemically?",
+      options: ["Element", "Mixture", "Molecule", "Proton"],
+      correct: 2
+    },
+    {
+      question: "Why can gases be compressed easily compared to solids and liquids?",
+      options: [
+        "Gas particles are very large",
+        "Gas particles are closely packed", 
+        "Gas particles have large spaces between them",
+        "Gas particles do not move"
+      ],
+      correct: 2
+    },
+    {
+      question: "Which of the following correctly describes particle motion in liquids?",
+      options: [
+        "Particles do not move at all",
+        "Particles vibrate in fixed positions",
+        "Particles move freely in all directions with very large gaps",
+        "Particles slide past each other but remain close together"
+      ],
+      correct: 3
+    }
+  ],
+  1: [ // Force & Motion
+    {
+      question: "What happens to the volume and shape of a substance when it changes from a solid to a liquid (melting)?",
+      options: [
+        "Both volume and shape stay fixed",
+        "Shape becomes fixed, volume changes",
+        "Volume becomes fixed, shape changes", 
+        "Both shape and volume can change"
+      ],
+      correct: 3
+    },
+    {
+      question: "In which state of matter do particles move fastest?",
+      options: ["Solid", "Liquid", "Gas", "Plasma"],
+      correct: 2
+    },
+    {
+      question: "What is the main reason gases can spread out to fill any container they're in?",
+      options: [
+        "Gas particles are large and sticky",
+        "Gas particles move slowly and stay put",
+        "Gas particles move rapidly and have large spaces between them",
+        "Gas particles are strongly attracted to each other"
+      ],
+      correct: 2
+    },
+    {
+      question: "Which statement correctly describes liquid state?",
+      options: [
+        "Particles are fixed in position and only vibrate",
+        "Particles are far apart and move independently with high speed",
+        "Particles are close but can slide/flow past one another",
+        "Particles form a rigid and fixed structure"
+      ],
+      correct: 2
+    },
+    {
+      question: "Suppose you decrease the temperature of a gas slowly at constant pressure — what state will it eventually become?",
+      options: [
+        "It will become a solid directly",
+        "It will become a liquid, then eventually a solid",
+        "It will stay a gas no matter how cold it gets", 
+        "It will become plasma"
+      ],
+      correct: 1
+    }
+  ],
+  2: [ // Energy
+    {
+      question: "According to the video, what is a fundamental rule about energy?",
+      options: [
+        "Energy is constantly being destroyed and remade",
+        "Energy can only be transferred between two objects, not more",
+        "Energy can be created from motion",
+        "Energy cannot be made; it is only transferred from one thing to another"
+      ],
+      correct: 3
+    },
+    {
+      question: "When a light bulb is plugged into a wall outlet, what type of energy is transferred through the wires?",
+      options: ["Chemical Energy", "Heat Energy", "Motion Energy", "Electrical Energy"],
+      correct: 3
+    },
+    {
+      question: "What is the correct energy transformation when a tablet is being charged?",
+      options: [
+        "Electrical Energy -> Chemical Energy",
+        "Chemical Energy -> Electrical Energy", 
+        "Light Energy -> Electrical Energy",
+        "Motion Energy -> Electrical Energy"
+      ],
+      correct: 0
+    },
+    {
+      question: "What type of energy is light energy transferred into by plants to produce food?",
+      options: ["Heat Energy", "Motion Energy", "Electrical Energy", "Chemical Energy"],
+      correct: 3
+    },
+    {
+      question: "How is energy transferred through sound waves?",
+      options: [
+        "Energy is transferred by the movement of electric currents",
+        "Energy is transferred by a steady flow of light particles", 
+        "Energy is transferred by the transformation of heat into sound",
+        "Energy is transferred by the vibration of air particles"
+      ],
+      correct: 3
+    }
+  ],
+  3: [ // Living Organisms
+    {
+      question: "What are the two main products produced by plants during photosynthesis?",
+      options: [
+        "Water and Carbon Dioxide",
+        "Glucose and Oxygen", 
+        "Starch and Water",
+        "Proteins and Nitrates"
+      ],
+      correct: 1
+    },
+    {
+      question: "The enzyme present in saliva that begins digestion of starch is called:",
+      options: ["Pepsin", "Lipase", "Salivary Amylase", "Hydrochloric Acid"],
+      correct: 2
+    },
+    {
+      question: "What is the critical function of Villi in the small intestine?",
+      options: [
+        "Protecting stomach walls from acid",
+        "Emulsifying large fat droplets", 
+        "Increasing surface area for nutrient absorption",
+        "Performing peristaltic movements"
+      ],
+      correct: 2
+    },
+    {
+      question: "Why does anaerobic respiration lead to muscle soreness?",
+      options: [
+        "Muscle cells convert pyruvic acid into ethanol",
+        "Energy is packaged in insufficient ATP molecules",
+        "Buildup of lactic acid causes irritation",
+        "Oxygen deprivation causes tissue tears"
+      ],
+      correct: 2
+    },
+    {
+      question: "What process moves water upward in plants during daytime?",
+      options: ["Translocation", "Osmotic Pressure", "Capillary Action", "Transpiration"],
+      correct: 3
+    }
+  ],
+  4: [ // Human Body
+    {
+      question: "The circulatory system is primarily responsible for:",
+      options: [
+        "Breaking down and absorbing food",
+        "Coordinating voluntary and involuntary actions", 
+        "Transporting blood, gases, and nutrients",
+        "Ridding the body of metabolic waste"
+      ],
+      correct: 2
+    },
+    {
+      question: "Which body system is the largest organ for protection and temperature regulation?",
+      options: ["Lymphatic System", "Skeletal System", "Endocrine System", "Integumentary System"],
+      correct: 3
+    },
+    {
+      question: "What is the major function of the large intestine?",
+      options: [
+        "Starting digestion with enzymes",
+        "Absorbing most nutrients using villi", 
+        "Producing acid and enzymes",
+        "Reabsorbing water before waste expulsion"
+      ],
+      correct: 3
+    },
+    {
+      question: "The structural units of the kidney that remove waste are called:",
+      options: ["Alveoli", "Villi", "Neurons", "Nephrons"],
+      correct: 3
+    },
+    {
+      question: "Which two systems interact for voluntary actions like running?",
+      options: [
+        "Respiratory and Circulatory systems",
+        "Endocrine and Nervous systems", 
+        "Integumentary and Lymphatic systems",
+        "Muscular and Skeletal systems"
+      ],
+      correct: 3
+    }
+  ],
+  5: [ // Weather & Climate
+    {
+      question: "Which atmospheric layer contains 80% of mass and most weather?",
+      options: ["Stratosphere", "Troposphere", "Mesosphere", "Thermosphere"],
+      correct: 1
+    },
+    {
+      question: "Which layer contains the ozone layer?",
+      options: ["Troposphere", "Mesosphere", "Stratosphere", "Exosphere"],
+      correct: 2
+    },
+    {
+      question: "In which layer do meteors burn up as 'shooting stars'?",
+      options: ["Stratosphere", "Mesosphere", "Thermosphere", "Exosphere"],
+      correct: 1
+    },
+    {
+      question: "Which is the hottest layer where Aurora Borealis occurs?",
+      options: ["Mesosphere", "Thermosphere", "Stratosphere", "Troposphere"],
+      correct: 1
+    },
+    {
+      question: "What is the outermost layer transitioning into space?",
+      options: ["Mesosphere", "Stratosphere", "Thermosphere", "Exosphere"],
+      correct: 3
+    }
+  ],
+  6: [ // Solar System
+    {
+      question: "What are the four terrestrial planets primarily made of?",
+      options: ["Gas and Ice", "Rocky Material", "Water and Ammonia", "Liquid Methane"],
+      correct: 1
+    },
+    {
+      question: "Which planet is smallest with shortest orbit?",
+      options: ["Mars", "Venus", "Mercury", "Earth"],
+      correct: 2
+    },
+    {
+      question: "Where is the Kuiper Belt located?",
+      options: [
+        "Between Mars and Jupiter",
+        "Spherical cloud at solar system edge", 
+        "Within Neptune's orbit",
+        "Disk of icy debris beyond Neptune"
+      ],
+      correct: 3
+    },
+    {
+      question: "What distinguishes Gas Giants from Ice Giants?",
+      options: [
+        "Gas Giants have solid cores",
+        "Ice Giants are primarily water and oxygen", 
+        "Gas Giants are mostly hydrogen/helium; Ice Giants have rock, ice, water mixture",
+        "Gas Giants have rings; Ice Giants don't"
+      ],
+      correct: 2
+    },
+    {
+      question: "What determines the solar system boundary in the Oort Cloud?",
+      options: [
+        "Edge of Milky Way galaxy",
+        "Combined gravitational pull of planets", 
+        "Boundary of Kuiper Belt",
+        "The Sun's influence"
+      ],
+      correct: 3
+    }
+  ],
+  7: [ // Environment
+    {
+      question: "What does the arrow in a food chain represent?",
+      options: [
+        "Flow of materials into environment",
+        "Flow of energy from food to feeder", 
+        "Direction of growth and population",
+        "Organism that is top predator"
+      ],
+      correct: 1
+    },
+    {
+      question: "What is the initial energy source for nearly all living things?",
+      options: ["Green Plants", "Heat from Earth", "Water", "The Sun"],
+      correct: 3
+    },
+    {
+      question: "What is the key difference between food chain and food web?",
+      options: [
+        "Food chain includes decomposers",
+        "Food web only includes predators", 
+        "Food web shows interconnections of many chains",
+        "Food chain shows energy loss"
+      ],
+      correct: 2
+    },
+    {
+      question: "Why are food chains typically limited to four steps?",
+      options: [
+        "Organisms run out of food types",
+        "Energy is lost as heat/waste at each step", 
+        "Top predator limits chain length",
+        "Sun's energy can't reach beyond fourth"
+      ],
+      correct: 1
+    },
+    {
+      question: "If a key food source goes extinct, what happens to its predator?",
+      options: [
+        "Predator population increases due to fewer competitors",
+        "Predator population increases as it eats more other prey", 
+        "Predator declines as food source removed, relying on remaining prey",
+        "Predator remains unchanged relying on plants"
+      ],
+      correct: 2
+    }
+  ],
+  8: [ // All Topics Mega Quiz – 20 mixed questions
+    {
+      question: "Which of the following is the smallest unit of matter?",
+      options: ["Molecule", "Atom", "Cell", "Compound"],
+      correct: 1
+    },
+    {
+      question: "Which state of matter has a fixed shape and fixed volume?",
+      options: ["Solid", "Liquid", "Gas", "Plasma"],
+      correct: 0
+    },
+    {
+      question: "In which state of matter do particles move fastest?",
+      options: ["Solid", "Liquid", "Gas", "Plasma"],
+      correct: 2
+    },
+    {
+      question: "According to energy principles, what is a fundamental rule about energy?",
+      options: [
+        "Energy is constantly being destroyed and remade",
+        "Energy can be created from motion", 
+        "Energy cannot be made; it is only transferred",
+        "Energy can only be transferred between two objects"
+      ],
+      correct: 2
+    },
+    {
+      question: "What are the two main products of photosynthesis?",
+      options: [
+        "Water and Carbon Dioxide",
+        "Glucose and Oxygen", 
+        "Starch and Water",
+        "Proteins and Nitrates"
+      ],
+      correct: 1
+    },
+    {
+      question: "The circulatory system is primarily responsible for:",
+      options: [
+        "Breaking down and absorbing food",
+        "Coordinating voluntary actions", 
+        "Transporting blood, gases, and nutrients",
+        "Ridding the body of metabolic waste"
+      ],
+      correct: 2
+    },
+    {
+      question: "Which atmospheric layer contains most weather and 80% of mass?",
+      options: ["Stratosphere", "Troposphere", "Mesosphere", "Thermosphere"],
+      correct: 1
+    },
+    {
+      question: "What does the arrow in a food chain represent?",
+      options: [
+        "Flow of materials into environment",
+        "Flow of energy from food to feeder", 
+        "Direction of growth",
+        "Organism that is top predator"
+      ],
+      correct: 1
+    },
+    {
+      question: "What is formed when two or more atoms combine chemically?",
+      options: ["Element", "Mixture", "Molecule", "Proton"],
+      correct: 2
+    },
+    {
+      question: "Why can gases be compressed easily compared to solids and liquids?",
+      options: [
+        "Gas particles are very large",
+        "Gas particles are closely packed", 
+        "Gas particles have large spaces between them",
+        "Gas particles do not move"
+      ],
+      correct: 2
+    },
+    {
+      question: "What is the initial energy source for nearly all living things?",
+      options: ["Green Plants", "Heat from Earth", "Water", "The Sun"],
+      correct: 3
+    },
+    {
+      question: "Which planet is smallest with shortest orbit around the Sun?",
+      options: ["Mars", "Venus", "Mercury", "Earth"],
+      correct: 2
+    },
+    {
+      question: "What process moves water upward in plants during daytime?",
+      options: ["Translocation", "Osmotic Pressure", "Capillary Action", "Transpiration"],
+      correct: 3
+    },
+    {
+      question: "Which body system is the largest organ for protection?",
+      options: ["Lymphatic System", "Skeletal System", "Endocrine System", "Integumentary System"],
+      correct: 3
+    },
+    {
+      question: "Which layer contains the ozone layer?",
+      options: ["Troposphere", "Mesosphere", "Stratosphere", "Exosphere"],
+      correct: 2
+    },
+    {
+      question: "What distinguishes Gas Giants from Ice Giants?",
+      options: [
+        "Gas Giants have solid cores",
+        "Ice Giants are primarily water and oxygen", 
+        "Gas Giants are mostly hydrogen/helium; Ice Giants have rock, ice, water mixture",
+        "Gas Giants have rings; Ice Giants don't"
+      ],
+      correct: 2
+    },
+    {
+      question: "Why are food chains typically limited to four steps?",
+      options: [
+        "Organisms run out of food types",
+        "Energy is lost as heat/waste at each step", 
+        "Top predator limits chain length",
+        "Sun's energy can't reach beyond fourth"
+      ],
+      correct: 1
+    },
+    {
+      question: "What is the correct energy transformation when charging a device?",
+      options: [
+        "Electrical Energy -> Chemical Energy",
+        "Chemical Energy -> Electrical Energy", 
+        "Light Energy -> Electrical Energy",
+        "Motion Energy -> Electrical Energy"
+      ],
+      correct: 0
+    },
+    {
+      question: "The structural units of the kidney that remove waste are called:",
+      options: ["Alveoli", "Villi", "Neurons", "Nephrons"],
+      correct: 3
+    },
+    {
+      question: "What determines the solar system boundary in the Oort Cloud?",
+      options: [
+        "Edge of Milky Way galaxy",
+        "Combined gravitational pull of planets", 
+        "Boundary of Kuiper Belt",
+        "The Sun's influence"
+      ],
+      correct: 3
+    }
+  ]
+};
+
+    const rocket = document.getElementById("rocket");
+    const spaceMap = document.getElementById("spaceMap");
+    const nodes = document.querySelectorAll(".topic-node");
+
+    const modalOverlay = document.getElementById("modalOverlay");
+    const closeModal = document.getElementById("closeModal");
+    const closeButton = document.getElementById("closeButton");
+    const quizButton = document.getElementById("quizButton");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalDescription = document.getElementById("modalDescription");
+    const videoBox = document.getElementById("videoBox");
+    const modalVideo = document.getElementById("modalVideo");
+
+    const quizModalOverlay = document.getElementById("quizModalOverlay");
+    const closeQuizModal = document.getElementById("closeQuizModal");
+    const quizContainer = document.getElementById("quizContainer");
+    const resultsContainer = document.getElementById("resultsContainer");
+    const quizTitle = document.getElementById("quizTitle");
+    const questionCounter = document.getElementById("questionCounter");
+    const questionText = document.getElementById("questionText");
+    const optionsContainer = document.getElementById("optionsContainer");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+    const submitBtn = document.getElementById("submitBtn");
+    const scoreDisplay = document.getElementById("scoreDisplay");
+    const resultsMessage = document.getElementById("resultsMessage");
+    const resultsList = document.getElementById("resultsList");
+    const retryButton = document.getElementById("retryButton");
+    const closeResultsButton = document.getElementById("closeResultsButton");
+    const progressFill = document.getElementById("progressFill");
+
+    let rocketPos = { x: null, y: null };
+    let currentTopicIndex = 0;
+
+    // Quiz State
+    let currentQuestion = 0;
+    let userAnswers = [];
+    let quizQuestions = [];
+
+    // Center of a topic node inside the map
+    function getNodeCenter(node) {
+      const mapRect = spaceMap.getBoundingClientRect();
+      const nodeRect = node.getBoundingClientRect();
+
+      const x = nodeRect.left - mapRect.left + nodeRect.width / 2;
+      const y = nodeRect.top - mapRect.top + nodeRect.height / 2;
+      return { x, y };
+    }
+
+    // Instantly place rocket – used at start
+    function placeRocketInstant(node) {
+      const { x, y } = getNodeCenter(node);
+      rocket.style.left = x + "px";
+      rocket.style.top = y + "px";
+      rocketPos = { x, y };
+    }
+
+    // Animate rocket from current position to target position
+    function animateRocketTo(node, callback) {
+      const target = getNodeCenter(node);
+
+      if (rocketPos.x === null || rocketPos.y === null) {
+        placeRocketInstant(node);
+        if (callback) callback();
+        return;
+      }
+
+      const startX = rocketPos.x;
+      const startY = rocketPos.y;
+      const deltaX = target.x - startX;
+      const deltaY = target.y - startY;
+      const duration = 800; // ms
+      const startTime = performance.now();
+
+      function step(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(elapsed / duration, 1); // 0 → 1
+
+        const ease = t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; // ease-in-out
+
+        const x = startX + deltaX * ease;
+        const y = startY + deltaY * ease;
+
+        rocket.style.left = x + "px";
+        rocket.style.top = y + "px";
+
+        const angle = Math.atan2(deltaY, deltaX);
+        rocket.style.transform = `translate(-50%, -50%) rotate(${angle}rad)`;
+
+        if (t < 1) {
+          requestAnimationFrame(step);
+        } else {
+          rocket.style.transform = "translate(-50%, -50%)";
+          rocketPos = { x: target.x, y: target.y };
+          setTimeout(() => {
+            if (callback) callback();
+          }, 2000);
+        }
+      }
+
+      requestAnimationFrame(step);
+    }
+
+    // Show modal with topic details
+    function showTopicModal(index) {
+      const topic = topics[index];
+      currentTopicIndex = index;
+
+      modalTitle.textContent = topic.title;
+      modalDescription.textContent = topic.description;
+
+      if (topic.video) {
+        videoBox.style.display = "block";
+        modalVideo.src = topic.video;
+      } else {
+        videoBox.style.display = "none";
+        modalVideo.src = "";
+      }
+
+      modalOverlay.style.display = "flex";
+    }
+
+    // Quiz Functions
+    function startQuiz() {
+      quizQuestions = quizData[currentTopicIndex] || quizData[0];
+
+      currentQuestion = 0;
+      userAnswers = new Array(quizQuestions.length).fill(null);
+
+      modalOverlay.style.display = "none";
+      quizModalOverlay.style.display = "flex";
+
+      quizTitle.textContent =
+        currentTopicIndex === 8
+          ? "All Topics Mega Quiz"
+          : `${topics[currentTopicIndex].title} Quiz`;
+
+      quizContainer.style.display = "flex";
+      resultsContainer.style.display = "none";
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      const question = quizQuestions[currentQuestion];
+
+      questionCounter.textContent = `Question ${currentQuestion + 1} of ${quizQuestions.length}`;
+      questionText.textContent = question.question;
+
+      const progressPercent = ((currentQuestion + 1) / quizQuestions.length) * 100;
+      progressFill.style.width = progressPercent + "%";
+
+      optionsContainer.innerHTML = "";
+      question.options.forEach((option, index) => {
+        const optionElement = document.createElement("div");
+        optionElement.className =
+          "option" + (userAnswers[currentQuestion] === index ? " selected" : "");
+
+        const badge = document.createElement("div");
+        badge.className = "option-badge";
+        badge.textContent = String.fromCharCode(65 + index); // A, B, C, D
+
+        const text = document.createElement("div");
+        text.className = "option-text";
+        text.textContent = option;
+
+        optionElement.appendChild(badge);
+        optionElement.appendChild(text);
+
+        optionElement.addEventListener("click", () => selectOption(index));
+        optionsContainer.appendChild(optionElement);
+      });
+
+      prevBtn.disabled = currentQuestion === 0;
+
+      if (currentQuestion === quizQuestions.length - 1) {
+        nextBtn.style.display = "none";
+        submitBtn.style.display = "block";
+      } else {
+        nextBtn.style.display = "block";
+        submitBtn.style.display = "none";
+      }
+    }
+
+    function selectOption(optionIndex) {
+      userAnswers[currentQuestion] = optionIndex;
+      loadQuestion();
+    }
+
+    function nextQuestion() {
+      if (userAnswers[currentQuestion] === null) {
+        alert("Pick an answer before going to the next question 🌟");
+        return;
+      }
+      currentQuestion++;
+      loadQuestion();
+    }
+
+    function prevQuestion() {
+      currentQuestion--;
+      loadQuestion();
+    }
+
+    function submitQuiz() {
+      if (userAnswers[currentQuestion] === null) {
+        alert("Pick an answer before submitting 🚀");
+        return;
+      }
+
+      let score = 0;
+      quizQuestions.forEach((question, index) => {
+        if (userAnswers[index] === question.correct) {
+          score++;
+        }
+      });
+
+      showResults(score);
+    }
+
+    function showResults(score) {
+      quizContainer.style.display = "none";
+      resultsContainer.style.display = "flex";
+
+      const percentage = (score / quizQuestions.length) * 100;
+      scoreDisplay.textContent = `${score}/${quizQuestions.length}`;
+
+      if (percentage >= 80) {
+        resultsMessage.textContent = "Excellent! You're a math superstar! 🚀✨";
+      } else if (percentage >= 60) {
+        resultsMessage.textContent = "Nice work! Keep practicing and you'll fly even higher! 🌟";
+      } else {
+        resultsMessage.textContent = "Good try! You can always retry the mission 💫";
+      }
+
+      resultsList.innerHTML = "";
+      quizQuestions.forEach((question, index) => {
+        const resultItem = document.createElement("div");
+        resultItem.className = "result-item";
+
+        const isCorrect = userAnswers[index] === question.correct;
+        const userAnswerText =
+          userAnswers[index] !== null
+            ? question.options[userAnswers[index]]
+            : "Not answered";
+
+        resultItem.innerHTML = `
+          <div class="result-question">${index + 1}. ${question.question}</div>
+          <div class="correct-answer">Correct: ${question.options[question.correct]}</div>
+          <div class="user-answer ${isCorrect ? "correct" : "incorrect"}">
+            Your answer: ${userAnswerText} ${isCorrect ? "✓" : "✗"}
+          </div>
+        `;
+
+        resultsList.appendChild(resultItem);
+      });
+    }
+
+    function retryQuiz() {
+      startQuiz();
+    }
+
+    function closeQuiz() {
+      quizModalOverlay.style.display = "none";
+    }
+
+    // Initial position on first planet
+    window.addEventListener("load", () => {
+      placeRocketInstant(nodes[0]);
+    });
+
+    // When clicking a topic:
+    nodes.forEach((node) => {
+      node.addEventListener("click", () => {
+        const index = parseInt(node.dataset.index, 10);
+
+        nodes.forEach((n) => (n.disabled = true));
+
+        animateRocketTo(node, () => {
+          showTopicModal(index);
+          nodes.forEach((n) => (n.disabled = false));
+        });
+      });
+    });
+
+    // Close learning popup
+    function hideModal() {
+      modalOverlay.style.display = "none";
+      modalVideo.src = "";
+    }
+
+    closeModal.addEventListener("click", hideModal);
+    closeButton.addEventListener("click", hideModal);
+    modalOverlay.addEventListener("click", (e) => {
+      if (e.target === modalOverlay) hideModal();
+    });
+
+    // Quiz button in learning modal
+    quizButton.addEventListener("click", startQuiz);
+
+    // Quiz navigation
+    prevBtn.addEventListener("click", prevQuestion);
+    nextBtn.addEventListener("click", nextQuestion);
+    submitBtn.addEventListener("click", submitQuiz);
+
+    // Quiz modal close
+    closeQuizModal.addEventListener("click", closeQuiz);
+    closeResultsButton.addEventListener("click", closeQuiz);
+    quizModalOverlay.addEventListener("click", (e) => {
+      if (e.target === quizModalOverlay) closeQuiz();
+    });
+
+    // Retry button
+    retryButton.addEventListener("click", retryQuiz);
+  </script>
+</body>
+</html>
